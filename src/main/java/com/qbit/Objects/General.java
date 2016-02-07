@@ -1,6 +1,7 @@
 package com.qbit.Objects;
 
 import java.io.Serializable;
+import java.util.Date;
 
 //This class represents the General Tab 
 public class General implements Serializable{
@@ -15,6 +16,7 @@ public class General implements Serializable{
 	private boolean isMinimized;
 	private int ShowCount;  // Values 0 = no show 1= Total Words 2=Session Words
 	private boolean isActivated;
+    private Date firstSaveDate;
 
 	public String getFullName() {
 		return fullName;
@@ -73,5 +75,13 @@ public class General implements Serializable{
 
     public void setActivated(boolean activated) {
         isActivated = activated;
+    }
+
+    public Date getFirstSaveDate() {
+        return firstSaveDate;
+    }
+
+    public void setFirstSaveDate(Date firstSaveDate) {
+        this.firstSaveDate = firstSaveDate;
     }
 }

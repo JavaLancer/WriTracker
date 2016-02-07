@@ -1,5 +1,6 @@
 package com.qbit.Assignment;
 
+import com.qbit.Dialogs.ActivateDialog;
 import com.qbit.Objects.General;
 import com.qbit.Objects.Project;
 
@@ -12,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Timer;
@@ -31,6 +33,11 @@ public class Start implements ActionListener, MenuListener {
     WriDemo demo = new WriDemo();
 
     public static void main(String[] args) {
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         try {
             // Set System L&F
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -84,6 +91,19 @@ public class Start implements ActionListener, MenuListener {
      */
     public void init() {
         loadFiles();
+        if (isExpired()) {
+            JOptionPane.showMessageDialog(null, "Your four week demo has ended, please contact support to purchase.", "Demo Has Ended", JOptionPane.WARNING_MESSAGE);
+
+            ActivateDialog dlgActivate = new ActivateDialog(demo);
+            dlgActivate.setLocationRelativeTo(null);
+            dlgActivate.setIconImage(new ImageIcon(getClass().getResource("/images/WW.png")).getImage());
+            dlgActivate.setModal(true);
+            dlgActivate.setVisible(true);
+            if (!general.isActivated()) {
+                System.exit(0);
+            }
+        }
+
         checkActivation();
         popup = new JPopupMenu();
         trayIcon = new TrayIcon(createImageIcon("/images/Logo.png", "Active Tracker").getImage().getScaledInstance(16, 16, Image.SCALE_DEFAULT));
@@ -172,6 +192,16 @@ public class Start implements ActionListener, MenuListener {
             }
         });
         trayIcon.addActionListener(this);
+    }
+
+    private boolean isExpired() {
+        if (general == null || general.isActivated()) {
+            return false;
+        }
+
+        Calendar fourMonthsAgo = Calendar.getInstance();
+        fourMonthsAgo.add(Calendar.WEEK_OF_YEAR, -4);
+        return general.getFirstSaveDate() != null && general.getFirstSaveDate().before(fourMonthsAgo.getTime());
     }
 
     private void checkActivation() {
@@ -330,7 +360,7 @@ public class Start implements ActionListener, MenuListener {
             if (project3 != null && project3.getProjectDeadline().before(today))
                 str.append(project3.getProjectTitle() + " deadline already passed. Please change the deadline");
 
-            if (general.isActivated()) {
+            if (general != null && general.isActivated()) {
                 if (project4 != null && project4.getProjectDeadline().before(today))
                     str.append(project4.getProjectTitle() + " deadline already passed. Please change the deadline\n");
 
@@ -383,7 +413,7 @@ public class Start implements ActionListener, MenuListener {
             TrackProj.add(proj3);
         }
 
-        if (general.isActivated()) {
+        if (general != null && general.isActivated()) {
             if (project4 != null) {
                 JMenuItem proj4 = new JMenuItem(project4.getProjectTitle());
                 proj4.setActionCommand("4");
@@ -406,7 +436,7 @@ public class Start implements ActionListener, MenuListener {
     //
 
 
-    static String configPath;
+    public static String configPath;
     static Project project1;
     static Project project2;
     static Project project3;
@@ -436,50 +466,52 @@ public class Start implements ActionListener, MenuListener {
             e.printStackTrace();
         }
 
-        try {
-            FileInputStream fin = new FileInputStream(configPath + "\\project1.ser");
-            ois = new ObjectInputStream(fin);
-            project1 = (Project) ois.readObject();
-            mytracker.project1 = project1;
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
-
-        try {
-            FileInputStream fin = new FileInputStream(configPath + "\\project2.ser");
-            ois = new ObjectInputStream(fin);
-            project2 = (Project) ois.readObject();
-            mytracker.project2 = project2;
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
-
-        try {
-            FileInputStream fin = new FileInputStream(configPath + "\\project3.ser");
-            ois = new ObjectInputStream(fin);
-            project3 = (Project) ois.readObject();
-            mytracker.project3 = project3;
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
-        //for project 4 and 5
-        if (general.isActivated()) {
+        if (general != null) {
             try {
-                FileInputStream fin = new FileInputStream(configPath + "\\project4.ser");
+                FileInputStream fin = new FileInputStream(configPath + "\\project1.ser");
                 ois = new ObjectInputStream(fin);
-                project4 = (Project) ois.readObject();
-                mytracker.project4 = project4;
+                project1 = (Project) ois.readObject();
+                mytracker.project1 = project1;
             } catch (Exception e) {
                 //e.printStackTrace();
             }
 
             try {
-                FileInputStream fin = new FileInputStream(configPath + "\\project5.ser");
+                FileInputStream fin = new FileInputStream(configPath + "\\project2.ser");
                 ois = new ObjectInputStream(fin);
-                project5 = (Project) ois.readObject();
-                mytracker.project5 = project5;
+                project2 = (Project) ois.readObject();
+                mytracker.project2 = project2;
             } catch (Exception e) {
                 //e.printStackTrace();
+            }
+
+            try {
+                FileInputStream fin = new FileInputStream(configPath + "\\project3.ser");
+                ois = new ObjectInputStream(fin);
+                project3 = (Project) ois.readObject();
+                mytracker.project3 = project3;
+            } catch (Exception e) {
+                //e.printStackTrace();
+            }
+            //for project 4 and 5
+            if (general != null && general.isActivated()) {
+                try {
+                    FileInputStream fin = new FileInputStream(configPath + "\\project4.ser");
+                    ois = new ObjectInputStream(fin);
+                    project4 = (Project) ois.readObject();
+                    mytracker.project4 = project4;
+                } catch (Exception e) {
+                    //e.printStackTrace();
+                }
+
+                try {
+                    FileInputStream fin = new FileInputStream(configPath + "\\project5.ser");
+                    ois = new ObjectInputStream(fin);
+                    project5 = (Project) ois.readObject();
+                    mytracker.project5 = project5;
+                } catch (Exception e) {
+                    //e.printStackTrace();
+                }
             }
         }
     }

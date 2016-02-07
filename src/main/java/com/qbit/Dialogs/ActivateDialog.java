@@ -4,13 +4,17 @@
 
 package com.qbit.Dialogs;
 
+import com.qbit.Assignment.Start;
 import com.qbit.Assignment.WriDemo;
+import com.qbit.Objects.General;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 
 /**
  * @author User #1
@@ -26,8 +30,21 @@ public class ActivateDialog extends JDialog {
         if (!validCode) {
             JOptionPane.showMessageDialog(null, "Unable to activate entered code, please contact support.", "Invalid Activation Code", JOptionPane.ERROR_MESSAGE);
         } else {
-            WriDemo.general.setActivated(true);
-            WriDemo.saveGeneral(WriDemo.general);
+            if (WriDemo.general != null) {
+                WriDemo.general.setActivated(true);
+                WriDemo.saveGeneral(Start.configPath, WriDemo.general);
+            } else {
+                General general = null;
+                try (FileInputStream fin = new FileInputStream(Start.configPath + "\\general.ser")){
+                    ObjectInputStream ois = new ObjectInputStream(fin);
+                    general = (General) ois.readObject();
+                    general.setActivated(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                WriDemo.saveGeneral(Start.configPath, general);
+            }
             JOptionPane.showMessageDialog(null, "Code successfully activated, please restart WriTracker.", "Activation Successful", JOptionPane.INFORMATION_MESSAGE);
             cancelButtonActionPerformed();
         }

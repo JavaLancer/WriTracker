@@ -520,10 +520,10 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             tabbedPane.addTab("Project 3", getProject(3));
         //for porject 4 and 5
         //we will add a condition here for license version
-        if (project4 != null && general.isActivated())
+        if (project4 != null && general != null && general.isActivated())
             tabbedPane.addTab(project4.getProjectTitle(), getProject(4));
         //pnl_Proj3 = getProject(3);
-        if (project5 != null && general.isActivated())
+        if (project5 != null && general != null && general.isActivated())
             tabbedPane.addTab(project5.getProjectTitle(), getProject(5));
         //
         topPanel.add(tabbedPane, BorderLayout.CENTER);
@@ -1476,7 +1476,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             //e.printStackTrace();
         }
 
-        if (general.isActivated()) {
+        if (general != null && general.isActivated()) {
             try {
                 FileInputStream fin = new FileInputStream(configPath + "\\project4.ser");
                 ois = new ObjectInputStream(fin);
@@ -1811,6 +1811,12 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         general.setTimeZone(txt_tz.getSelectedIndex());
         general.setLaunchStartUp(isLaunched.isSelected());
         general.setMinimized(isMinimized.isSelected());
+        if (Start.general.getFirstSaveDate() == null) {
+            general.setFirstSaveDate(new Date());
+        } else {
+            general.setFirstSaveDate(Start.general.getFirstSaveDate());
+        }
+
         int showCount = 0;
         if (isShowCount.isSelected()) {
             if (radio_total.isSelected())
@@ -1820,7 +1826,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         }
         general.setShowCount(showCount);
 
-        saveGeneral(general);
+        saveGeneral(configPath, general);
         int val = JOptionPane.showConfirmDialog(this, "Do you wish to exit Preferences after saving?", "Save Preferences", JOptionPane.YES_NO_OPTION);
         if (val == JOptionPane.YES_OPTION) {
             //JOptionPane.showMessageDialog(this,"Preferences saved successfully","Save Dialog",JOptionPane.PLAIN_MESSAGE);
@@ -1838,9 +1844,9 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         }
     }
 
-    public static void saveGeneral(General general) {
+    public static void saveGeneral(String path, General general) {
         try {
-            FileOutputStream fout = new FileOutputStream(configPath + "\\general.ser");
+            FileOutputStream fout = new FileOutputStream(path + "\\general.ser");
             ObjectOutputStream oos = new ObjectOutputStream(fout);
             oos.writeObject(general);
 
