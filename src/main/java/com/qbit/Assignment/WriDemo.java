@@ -514,15 +514,11 @@ public class WriDemo extends JFrame implements NativeKeyListener,ActionListener,
 			tabbedPane.addTab( "Project 3", getProject(3));
 		//for porject 4 and 5
 		//we will add a condition here for license version
-		if(project4 != null)
+		if(project4 != null && general.isActivated())
 			tabbedPane.addTab( project4.getProjectTitle(), getProject(4));
-		else 
-			tabbedPane.addTab( "Project 4", getProject(4));
 		//pnl_Proj3 = getProject(3);
-		if(project5 != null)
+		if(project5 != null && general.isActivated())
 			tabbedPane.addTab( project5.getProjectTitle(), getProject(5));
-		else 
-			tabbedPane.addTab( "Project 5", getProject(5));
 		//
 		topPanel.add( tabbedPane, BorderLayout.CENTER);
 		setSize(1300, 600);
@@ -1477,34 +1473,31 @@ public class WriDemo extends JFrame implements NativeKeyListener,ActionListener,
 		} catch (Exception e) {
 			//e.printStackTrace();
 		}
-		
-		//for proj 4 and 5
-		try {
-			FileInputStream fin = new FileInputStream(configPath+"\\project4.ser");
-			ois = new ObjectInputStream(fin);
-			project4 = (Project) ois.readObject();
-			if(proj4SessionStart)
-				project4.setCurrentWords(0);
-		} catch (Exception e) {
-			//e.printStackTrace();
+
+		if (general.isActivated()) {
+			try {
+				FileInputStream fin = new FileInputStream(configPath+"\\project4.ser");
+				ois = new ObjectInputStream(fin);
+				project4 = (Project) ois.readObject();
+				if(proj4SessionStart)
+					project4.setCurrentWords(0);
+			} catch (Exception e) {
+				//e.printStackTrace();
+			}
+
+
+			try {
+				FileInputStream fin = new FileInputStream(configPath+"\\project5.ser");
+				ois = new ObjectInputStream(fin);
+				project5 = (Project) ois.readObject();
+				if(proj5SessionStart)
+					project5.setCurrentWords(0);
+			} catch (Exception e) {
+				//e.printStackTrace();
+			}
 		}
-		
-		
-		try {
-			FileInputStream fin = new FileInputStream(configPath+"\\project5.ser");
-			ois = new ObjectInputStream(fin);
-			project5 = (Project) ois.readObject();
-			if(proj5SessionStart)
-				project5.setCurrentWords(0);
-		} catch (Exception e) {
-			//e.printStackTrace();
-		}
-		//
-		
-    	//
 		initUI(general);
 		setVisible(true);
-		//
 	}
 	
 	static String configPath;

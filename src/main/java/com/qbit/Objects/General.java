@@ -4,6 +4,17 @@ import java.io.Serializable;
 
 //This class represents the General Tab 
 public class General implements Serializable{
+    private static final long serialVersionUID = 1322923328352154553L;
+
+	private String fullName;
+	private String emailAddress;
+	private int timeZone;
+	private String fbUserName;
+	private String twitUserName;
+	private boolean isLaunchStartUp;
+	private boolean isMinimized;
+	private int ShowCount;  // Values 0 = no show 1= Total Words 2=Session Words
+	private boolean isActivated;
 
 	public String getFullName() {
 		return fullName;
@@ -44,25 +55,23 @@ public class General implements Serializable{
 	public boolean isMinimized() {
 		return isMinimized;
 	}
+
 	public void setMinimized(boolean isMinimized) {
 		this.isMinimized = isMinimized;
 	}
-	
-	private String fullName;
-	private String emailAddress;
-	private int timeZone;
-	private String fbUserName;
-	private String twitUserName;
-	private boolean isLaunchStartUp;
-	private boolean isMinimized;
-	private int ShowCount;  // Values 0 = no show 1= Total Words 2=Session Words 
-	
+
 	public int getShowCount() {
 		return ShowCount;
 	}
 	public void setShowCount(int showCount) {
 		ShowCount = showCount;
 	}
-	
-	
+
+    public boolean isActivated() {
+        return isActivated;
+    }
+
+    public void setActivated(boolean activated) {
+        isActivated = activated;
+    }
 }

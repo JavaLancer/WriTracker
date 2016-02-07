@@ -1,50 +1,27 @@
 package com.qbit.Assignment;
 
-import java.awt.Color;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.logging.Filter;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
-import javax.swing.UIManager;
-import javax.swing.WindowConstants;
-
+import com.qbit.Objects.General;
+import com.qbit.Objects.Project;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
-import com.qbit.Objects.General;
-import com.qbit.Objects.Project;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.util.*;
+import java.util.List;
+import java.util.Timer;
+import java.util.logging.Filter;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 public class ActiveTracker extends JDialog implements NativeKeyListener,ActionListener{
 	
@@ -186,7 +163,15 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,ActionLi
 		if(configPath==null)
 			configPath="C:\\Config";
 		ObjectInputStream ois;
-    	//
+
+		try {
+			FileInputStream fin = new FileInputStream(configPath+"\\general.ser");
+			ois = new ObjectInputStream(fin);
+			general = (General) ois.readObject();
+		} catch (Exception e) {
+			//e.printStackTrace();
+		}
+
 		try {
 			FileInputStream fin = new FileInputStream(configPath+"\\project1.ser");
 			ois = new ObjectInputStream(fin);
@@ -210,31 +195,25 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,ActionLi
 		} catch (Exception e) {
 			//e.printStackTrace();
 		}
-		//for project 4 and 5
-		try {
-			FileInputStream fin = new FileInputStream(configPath+"\\project4.ser");
-			ois = new ObjectInputStream(fin);
-			project4 = (Project) ois.readObject();
-		} catch (Exception e) {
-			//e.printStackTrace();
+
+		if (general.isActivated()) {
+			try {
+				FileInputStream fin = new FileInputStream(configPath+"\\project4.ser");
+				ois = new ObjectInputStream(fin);
+				project4 = (Project) ois.readObject();
+			} catch (Exception e) {
+				//e.printStackTrace();
+			}
+
+			try {
+				FileInputStream fin = new FileInputStream(configPath+"\\project5.ser");
+				ois = new ObjectInputStream(fin);
+				project5 = (Project) ois.readObject();
+			} catch (Exception e) {
+				//e.printStackTrace();
+			}
 		}
-		
-		try {
-			FileInputStream fin = new FileInputStream(configPath+"\\project5.ser");
-			ois = new ObjectInputStream(fin);
-			project5 = (Project) ois.readObject();
-		} catch (Exception e) {
-			//e.printStackTrace();
-		}
-		
-		try {
-			FileInputStream fin = new FileInputStream(configPath+"\\general.ser");
-			ois = new ObjectInputStream(fin);
-			general = (General) ois.readObject();
-		} catch (Exception e) {
-			//e.printStackTrace();
-		}
-		
+
 		if(project1 == null && project2 == null && project3 == null && project4 == null && project5 == null){
 			JOptionPane.showMessageDialog(this,"Please enter Project Info first","Input Validation Error",JOptionPane.ERROR_MESSAGE);
 			return;

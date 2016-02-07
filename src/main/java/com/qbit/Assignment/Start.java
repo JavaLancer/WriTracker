@@ -1,16 +1,13 @@
 package com.qbit.Assignment;
 
-import java.awt.AWTException;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import com.qbit.Objects.General;
+import com.qbit.Objects.Project;
+
+import javax.swing.*;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,19 +15,6 @@ import java.io.ObjectInputStream;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Timer;
-
-import javax.swing.ImageIcon;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
-import javax.swing.UIManager;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
-
-import com.qbit.Objects.General;
-import com.qbit.Objects.Project;
 
 /*
  * This is the first class which is called.
@@ -100,8 +84,7 @@ public class Start implements ActionListener,MenuListener{
 	public void init(){
 		 LoadFiles();
 		 popup = new JPopupMenu();
-	     trayIcon =
-	                new TrayIcon(createImageIcon("/images/Logo.png", "Active Tracker").getImage().getScaledInstance(16,16, Image.SCALE_DEFAULT));
+	     trayIcon = new TrayIcon(createImageIcon("/images/Logo.png", "Active Tracker").getImage().getScaledInstance(16,16, Image.SCALE_DEFAULT));
 	     final SystemTray tray = SystemTray.getSystemTray();
 	     final JMenuItem PrefItem = new JMenuItem("Preference");
 	     PrefItem.setActionCommand("P");
@@ -124,8 +107,8 @@ public class Start implements ActionListener,MenuListener{
 	     popup.add(new JSeparator());
 	     popup.add(exitItem);
 	     final JMenuItem stopTrack = new JMenuItem("STOP Tracker");
- 		stopTrack.setActionCommand("STOP");
- 		stopTrack.addActionListener(this);
+ 		 stopTrack.setActionCommand("STOP");
+ 		 stopTrack.addActionListener(this);
 	     //trayIcon.setPopupMenu(popup);
 	     try {
 	            tray.add(trayIcon);
@@ -185,8 +168,6 @@ public class Start implements ActionListener,MenuListener{
 	            }
 	        });
 	       trayIcon.addActionListener(this);
-	        
-	         
 	}
 
 	 @Override
@@ -284,7 +265,7 @@ public class Start implements ActionListener,MenuListener{
 			ActiveTracker.appStatus = true;
 		}
 		//for project 4 and 5
-		if(command.equals("4")){
+		if(command.equals("4") && general.isActivated()){
 			mytracker.selectedProject = 4;
 			ActiveTracker.disposeWordCount();
 			ActiveTracker.DisplayWordCount();
@@ -303,7 +284,7 @@ public class Start implements ActionListener,MenuListener{
 			WriDemo.proj4SessionStart = false;
 			ActiveTracker.appStatus = true;
 		}
-		if(command.equals("5")){
+		if(command.equals("5") && general.isActivated()){
 			mytracker.selectedProject = 5;
 			mytracker.stopListening();
 			mytracker.startListening();
@@ -337,12 +318,14 @@ public class Start implements ActionListener,MenuListener{
 		
 			if(project3!=null && project3.getProjectDeadline().before(today))
 				str.append(project3.getProjectTitle()+" deadline already passed. Please change the deadline");
-			//for project 4 and 5
-			if(project4!=null && project4.getProjectDeadline().before(today))
-				str.append(project4.getProjectTitle()+" deadline already passed. Please change the deadline\n");
-		
-			if(project5!=null && project5.getProjectDeadline().before(today))
-				str.append(project5.getProjectTitle()+" deadline already passed. Please change the deadline");
+
+            if (general.isActivated()) {
+                if(project4!=null && project4.getProjectDeadline().before(today))
+                    str.append(project4.getProjectTitle()+" deadline already passed. Please change the deadline\n");
+
+                if(project5!=null && project5.getProjectDeadline().before(today))
+                    str.append(project5.getProjectTitle()+" deadline already passed. Please change the deadline");
+            }
 
 			if(!str.toString().equals(""))
 				JOptionPane.showMessageDialog(null,str.toString(),"Deadline Past Today",JOptionPane.INFORMATION_MESSAGE);
@@ -365,7 +348,7 @@ public class Start implements ActionListener,MenuListener{
 	 */
 	private void addProjectToMenu(){
 	       LoadFiles();
-	      
+
 	      if(project1 != null){
 		      JMenuItem proj1 = new JMenuItem(project1.getProjectTitle());
 		      proj1.setActionCommand("1");
@@ -388,22 +371,24 @@ public class Start implements ActionListener,MenuListener{
 		      proj3.addActionListener(this);
 		      TrackProj.add(proj3);
 	      }
-	      //for project 4 and 5
-	      if(project4 != null){
-		      JMenuItem proj4 = new JMenuItem(project4.getProjectTitle());
-		      proj4.setActionCommand("4");
-		      proj4.setFont(new Font("Arial",Font.BOLD,13));
-		      proj4.addActionListener(this);
-		      TrackProj.add(proj4);
-	      }
-	      if(project5 != null){
-		      JMenuItem proj5 = new JMenuItem(project5.getProjectTitle());
-		      proj5.setActionCommand("5");
-		      proj5.setFont(new Font("Arial",Font.BOLD,13));
-		      proj5.addActionListener(this);
-		      TrackProj.add(proj5);
-	      }
-	      
+
+        if (general.isActivated()) {
+            if(project4 != null){
+                JMenuItem proj4 = new JMenuItem(project4.getProjectTitle());
+                proj4.setActionCommand("4");
+                proj4.setFont(new Font("Arial",Font.BOLD,13));
+                proj4.addActionListener(this);
+                TrackProj.add(proj4);
+            }
+            if(project5 != null){
+                JMenuItem proj5 = new JMenuItem(project5.getProjectTitle());
+                proj5.setActionCommand("5");
+                proj5.setFont(new Font("Arial",Font.BOLD,13));
+                proj5.addActionListener(this);
+                TrackProj.add(proj5);
+            }
+        }
+
 	     // editMenu.show(this, 20, 20);
 	   }
 
@@ -432,7 +417,16 @@ public class Start implements ActionListener,MenuListener{
 			configPath="C:\\Config";
 		mytracker.configPath = configPath;
 		ObjectInputStream ois;
-    	//
+
+        try {
+            FileInputStream fin = new FileInputStream(configPath+"\\general.ser");
+            ois = new ObjectInputStream(fin);
+            general = (General) ois.readObject();
+            mytracker.general = general;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 		try {
 			FileInputStream fin = new FileInputStream(configPath+"\\project1.ser");
 			ois = new ObjectInputStream(fin);
@@ -460,32 +454,25 @@ public class Start implements ActionListener,MenuListener{
 			//e.printStackTrace();
 		}
 		//for project 4 and 5
-		try {
-			FileInputStream fin = new FileInputStream(configPath+"\\project4.ser");
-			ois = new ObjectInputStream(fin);
-			project4 = (Project) ois.readObject();
-			mytracker.project4 = project4;
-		} catch (Exception e) {
-			//e.printStackTrace();
-		}
-		
-		try {
-			FileInputStream fin = new FileInputStream(configPath+"\\project5.ser");
-			ois = new ObjectInputStream(fin);
-			project5 = (Project) ois.readObject();
-			mytracker.project5 = project5;
-		} catch (Exception e) {
-			//e.printStackTrace();
-		}
-		
-		try {
-			FileInputStream fin = new FileInputStream(configPath+"\\general.ser");
-			ois = new ObjectInputStream(fin);
-			general = (General) ois.readObject();
-			mytracker.general = general;
-		} catch (Exception e) {
-			//e.printStackTrace();
-		}
+        if (general.isActivated()) {
+            try {
+                FileInputStream fin = new FileInputStream(configPath+"\\project4.ser");
+                ois = new ObjectInputStream(fin);
+                project4 = (Project) ois.readObject();
+                mytracker.project4 = project4;
+            } catch (Exception e) {
+                //e.printStackTrace();
+            }
+
+            try {
+                FileInputStream fin = new FileInputStream(configPath+"\\project5.ser");
+                ois = new ObjectInputStream(fin);
+                project5 = (Project) ois.readObject();
+                mytracker.project5 = project5;
+            } catch (Exception e) {
+                //e.printStackTrace();
+            }
+        }
 	}
 	//
 
