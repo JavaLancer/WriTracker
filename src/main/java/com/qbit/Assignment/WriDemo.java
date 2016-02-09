@@ -38,6 +38,10 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
     JCheckBox isMinimized;
     JCheckBox isShowCount;
 
+    StandardButton btnGeneralSave = new StandardButton("    Save    ");
+    StandardButton btnGeneralEdit = new StandardButton("    Edit    ");
+    StandardButton btnProjectEdit;
+    StandardButton btnProjectSave;
 
     JLabel lblStatus;
     JRadioButton radio_total;
@@ -436,9 +440,9 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         //radio_session.setBackground(bgColor);
         panWord.add(radio_session);
         radio_session.setVisible(isShow);
-        ButtonGroup group = new ButtonGroup();
-        group.add(radio_total);
-        group.add(radio_session);
+        ButtonGroup wordCountGroup = new ButtonGroup();
+        wordCountGroup.add(radio_total);
+        wordCountGroup.add(radio_session);
 
         if (general != null && general.getShowCount() != 0) // check showcount values
             isShowCount.setSelected(true);
@@ -462,19 +466,18 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
 
         JPanel pnlBottom = new JPanel();
         pnlBottom.setLayout(new FlowLayout(FlowLayout.CENTER));
-        StandardButton btn_Save = new StandardButton("    Save    ");
-        btn_Save.setFont(font);
-        btn_Save.setBackground(Color.gray);
-        btn_Save.setForeground(Color.black);
-        btn_Save.setActionCommand("GS");  //i.e. General Save
-        btn_Save.addActionListener(this);
-        pnlBottom.add(btn_Save);
+        btnGeneralSave.setFont(font);
+        btnGeneralSave.setBackground(Color.gray);
+        btnGeneralSave.setForeground(Color.black);
+        btnGeneralSave.setActionCommand("GS");  //i.e. General Save
+        btnGeneralSave.addActionListener(this);
+        btnGeneralSave.setVisible(false);
+        pnlBottom.add(btnGeneralSave);
 
-        StandardButton btn_Edit = new StandardButton("    Edit    ");
-        btn_Edit.setActionCommand("GE");  //i.e. General Edit
-        btn_Edit.setFont(font);
-        btn_Edit.addActionListener(this);
-        pnlBottom.add(btn_Edit);
+        btnGeneralEdit.setActionCommand("GE");  //i.e. General Edit
+        btnGeneralEdit.setFont(font);
+        btnGeneralEdit.addActionListener(this);
+        pnlBottom.add(btnGeneralEdit);
 
         if (showActivate) {
             StandardButton btn_Activate = new StandardButton("    Activate    ");
@@ -483,6 +486,18 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             btn_Activate.addActionListener(this);
             pnlBottom.add(btn_Activate);
         }
+
+        txt_Name.setEnabled(false);
+        txt_email.setEnabled(false);
+        txt_fb.setEnabled(false);
+        txt_twt.setEnabled(false);
+        txt_tz.setEnabled(false);
+        isLaunched.setEnabled(false);
+        isMinimized.setEnabled(false);
+        isShowCount.setEnabled(false);
+        radio_total.setEnabled(false);
+        radio_session.setEnabled(false);
+
         //pnlBottom.setBackground(bgColor);
 
         //c.fill = GridBagConstraints.HORIZONTAL;
@@ -644,28 +659,21 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
     JDatePickerImpl datePicker;
 
 
-    ArrayList<Object> proj1Lists = new ArrayList<Object>();
-    ArrayList<Object> proj2Lists = new ArrayList<Object>();
-    ArrayList<Object> proj3Lists = new ArrayList<Object>();
-    ArrayList<Object> proj4Lists = new ArrayList<Object>();
-    ArrayList<Object> proj5Lists = new ArrayList<Object>();
+    ArrayList<Object> proj1Lists = new ArrayList<>();
+    ArrayList<Object> proj2Lists = new ArrayList<>();
+    ArrayList<Object> proj3Lists = new ArrayList<>();
+    ArrayList<Object> proj4Lists = new ArrayList<>();
+    ArrayList<Object> proj5Lists = new ArrayList<>();
 
     JLabel lbl_1000[] = new JLabel[5];
     JLabel lbl_2000[] = new JLabel[5];
-    ;
     JLabel lbl_5000[] = new JLabel[5];
-    ;
     JLabel lbl_10000[] = new JLabel[5];
-    ;
 
     JLabel lbl_wordstocomplete[] = new JLabel[5];
-    ;
     JLabel lbl_totalwords[] = new JLabel[5];
-    ;
     JLabel lbl_wordgoal[] = new JLabel[5];
-    ;
     JLabel lbl_milestonecount[] = new JLabel[5];
-    ;
     JLabel lbl_daysLeft[] = new JLabel[5];
 
     JTextField txt_ProjName[] = new JTextField[5];
@@ -1366,22 +1374,25 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
 
 
         JPanel pnlBottom = new JPanel();
-        StandardButton btn_Save = new StandardButton("    Save    ");
-        btn_Save.setBackground(Color.gray);
-        btn_Save.setFont(font);
-        btn_Save.setForeground(Color.black);
-        btn_Save.setActionCommand(projID + "S");
-        btn_Save.addActionListener(this);
-        pnlBottom.add(btn_Save);
+        btnProjectSave = new StandardButton("    Save    ");
+        btnProjectSave.setBackground(Color.gray);
+        btnProjectSave.setFont(font);
+        btnProjectSave.setForeground(Color.black);
+        btnProjectSave.setActionCommand(projID + "S");
+        btnProjectSave.setName("btnProjectSave" + projID);
+        btnProjectSave.addActionListener(this);
+        btnProjectSave.setVisible(false);
+        pnlBottom.add(btnProjectSave);
         //pnlBottom.setBackground(bgColor);
 
-        StandardButton btn_Edit = new StandardButton("    Edit    ");
-        btn_Edit.setBackground(Color.gray);
-        btn_Edit.setForeground(Color.black);
-        btn_Edit.setFont(font);
-        pnlBottom.add(btn_Edit);
-        btn_Edit.setActionCommand(projID + "E");
-        btn_Edit.addActionListener(this);
+        btnProjectEdit = new StandardButton("    Edit    ");
+        btnProjectEdit.setBackground(Color.gray);
+        btnProjectEdit.setForeground(Color.black);
+        btnProjectEdit.setFont(font);
+        pnlBottom.add(btnProjectEdit);
+        btnProjectEdit.setActionCommand(projID + "E");
+        btnProjectEdit.setName("btnProjectEdit" + projID);
+        btnProjectEdit.addActionListener(this);
         pnlBottom.setOpaque(true);
 
 
@@ -1398,18 +1409,28 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         //
         switch (projID) {
             case 1:
+                proj1Lists.add(btnProjectSave);
+                proj1Lists.add(btnProjectEdit);
                 EnableProjectFields(proj1Lists, false);
                 break;
             case 2:
+                proj2Lists.add(btnProjectSave);
+                proj2Lists.add(btnProjectEdit);
                 EnableProjectFields(proj2Lists, false);
                 break;
             case 3:
+                proj3Lists.add(btnProjectSave);
+                proj3Lists.add(btnProjectEdit);
                 EnableProjectFields(proj3Lists, false);
                 break;
             case 4:
+                proj4Lists.add(btnProjectSave);
+                proj4Lists.add(btnProjectEdit);
                 EnableProjectFields(proj4Lists, false);
                 break;
             case 5:
+                proj5Lists.add(btnProjectSave);
+                proj5Lists.add(btnProjectEdit);
                 EnableProjectFields(proj5Lists, false);
                 break;
 
@@ -1660,6 +1681,10 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             isLaunched.setEnabled(true);
             isMinimized.setEnabled(true);
             isShowCount.setEnabled(true);
+            radio_total.setEnabled(true);
+            radio_session.setEnabled(true);
+            btnGeneralSave.setVisible(true);
+            btnGeneralEdit.setVisible(false);
         }
         if (ae.getActionCommand().equals("AC")) {
             ActivateDialog dlgActivate = new ActivateDialog(this);
@@ -1675,7 +1700,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
     }
 
     public void EditProject(int id) {
-        ArrayList<Object> lists = null;
+        ArrayList<Object> lists;
         switch (id) {
             case 1:
                 lists = proj1Lists;
@@ -1692,6 +1717,21 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             case 5:
                 lists = proj5Lists;
                 break;
+            default:
+                lists = new ArrayList<>();
+        }
+
+        for (Object obj : lists) {
+            if (!(obj instanceof StandardButton)) {
+                continue;
+            }
+            StandardButton btn = (StandardButton) obj;
+            if (btn.getName().equals("btnProjectEdit" + id)) {
+                btn.setVisible(false);
+            }
+            if (btn.getName().equals("btnProjectSave" + id)) {
+                btn.setVisible(true);
+            }
         }
 
         EnableProjectFields(lists, true);
@@ -1699,7 +1739,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
 
 
     public void SaveProject(int id) {
-        ArrayList<Object> lists = null;
+        ArrayList<Object> lists;
         //
         switch (id) {
             case 1:
@@ -1717,9 +1757,9 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             case 5:
                 lists = proj5Lists;
                 break;
+            default:
+                lists = new ArrayList<>();
         }
-        //
-
 
         Project proj = new Project();
         String projTitle = ((JTextField) lists.get(0)).getText().trim();
@@ -1731,7 +1771,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         proj.setProjectType(((JComboBox) lists.get(2)).getSelectedIndex());
         JDatePickerImpl mydatePicker = (JDatePickerImpl) lists.get(1);
         Date deadDate = (Date) mydatePicker.getModel().getValue();
-        if (!deadDate.after(new Date())) {
+        if (deadDate == null || deadDate.before(new Date())) {
             JOptionPane.showMessageDialog(this, "Project Deadline is not a valid date", "Project deadline Validation Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -1741,7 +1781,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         try {
             wordGoal = Integer.parseInt((((JTextField) lists.get(3)).getText().trim()));
         } catch (Exception c) {
-            JOptionPane.showMessageDialog(this, "Please enter numeric value only(only numbers without anu comma)", "Project WordGoal Validation Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please enter numeric value only(only numbers without any commas)", "Project WordGoal Validation Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         proj.setWordGoal(wordGoal);
@@ -1773,7 +1813,19 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         }
         //getProject(id);
         EnableProjectFields(lists, false);
-        return;
+
+        for (Object obj : lists) {
+            if (!(obj instanceof StandardButton)) {
+                continue;
+            }
+            StandardButton btn = (StandardButton) obj;
+            if (btn.getName().equals("btnProjectEdit" + id)) {
+                btn.setVisible(true);
+            }
+            if (btn.getName().equals("btnProjectSave" + id)) {
+                btn.setVisible(false);
+            }
+        }
     }
 
     public void EnableProjectFields(ArrayList<Object> lists, boolean isEnabled) {
@@ -1801,6 +1853,9 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             return;
         }
 
+        btnGeneralSave.setVisible(false);
+        btnGeneralEdit.setVisible(true);
+
         //adding dialog box to asking for save
 
         General general = new General();
@@ -1811,7 +1866,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         general.setTimeZone(txt_tz.getSelectedIndex());
         general.setLaunchStartUp(isLaunched.isSelected());
         general.setMinimized(isMinimized.isSelected());
-        if (Start.general.getFirstSaveDate() == null) {
+        if (Start.general == null || Start.general.getFirstSaveDate() == null) {
             general.setFirstSaveDate(new Date());
         } else {
             general.setFirstSaveDate(Start.general.getFirstSaveDate());
@@ -1841,6 +1896,8 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             isLaunched.setEnabled(false);
             isMinimized.setEnabled(false);
             isShowCount.setEnabled(false);
+            radio_total.setEnabled(false);
+            radio_session.setEnabled(false);
         }
     }
 
