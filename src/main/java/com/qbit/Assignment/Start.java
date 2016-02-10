@@ -348,6 +348,12 @@ public class Start implements ActionListener, MenuListener {
         if (command.equals("P") && !isWindowShowing) {//start Preference
             //WriDemo demo = new WriDemo();
             demo.ShowUI();
+            demo.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    isWindowShowing = false;
+                    demo.dispose();
+                }
+            });
             //check the deadlines
             Date today = new Date();
             StringBuilder str = new StringBuilder("");

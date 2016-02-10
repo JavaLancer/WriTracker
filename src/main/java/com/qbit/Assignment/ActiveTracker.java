@@ -306,7 +306,8 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,ActionLi
 		displayFrame = new JFrame();
 		Displaydialog = new JDialog(displayFrame,false);
 		Displaydialog.setModalityType(ModalityType.MODELESS);
-		Displaydialog.setBackground(bgColor);
+        Displaydialog.setAlwaysOnTop(true);
+        Displaydialog.setBackground(bgColor);
 		//dialog.setSize(100,100);
 		int ScreenX = Toolkit.getDefaultToolkit().getScreenSize().height - 120;
 		int ScreenY = Toolkit.getDefaultToolkit().getScreenSize().width - 120;
@@ -425,7 +426,7 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,ActionLi
 	}
 	
 	public void updateProjectCount(int size){  //the size matters when came from clipboard
-		System.out.println("Update Word COunt start"+wordcounts.size());
+		System.out.println("Update Word Count Start"+wordcounts.size());
 		int wordsRemain = 0; // the word remaining before the updates
 		switch (selectedProject) {
 		case 1:

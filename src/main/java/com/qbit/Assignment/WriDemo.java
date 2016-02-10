@@ -258,7 +258,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         panel1.add(lbl_bl, c);
 
 
-        JLabel lbl2 = new JLabel("<html><b>Email <br>Address:<html/>");
+        JLabel lbl2 = new JLabel("<html><b>Email Address:<html/>");
         lbl2.setFont(font);
         c.weightx = 0.0;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -310,7 +310,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         }
         panel1.add(txt_tz, c);
 
-        JLabel lbl4 = new JLabel("<html><b>Facebook<br>UserName:<html/>");
+        JLabel lbl4 = new JLabel("<html><b>Facebook UserName:<html/>");
         lbl4.setFont(font);
         c.weightx = 0.0;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -334,7 +334,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         txt_fb.addFocusListener(this);
 
 
-        JLabel lbl5 = new JLabel("<html><b>Twitter<br>UserName:<html/>");
+        JLabel lbl5 = new JLabel("<html><b>Twitter UserName:<html/>");
         lbl5.setFont(font);
         c.weightx = 0.0;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -357,7 +357,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         //txt_Name.)
         txt_twt.addFocusListener(this);
 
-        JLabel lbl6 = new JLabel("<html><b>Writracker<br>Launches<br>at startup:<html/>");
+        JLabel lbl6 = new JLabel("<html><b>WriTracker Launches<br>At Startup:<html/>");
         lbl6.setFont(font);
         c.weightx = 0.0;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -377,7 +377,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         panel1.add(isLaunched, c);
 
 
-        JLabel lbl7 = new JLabel("<html><b>Keep<br>Minimized<br>while running:<html/>");
+        JLabel lbl7 = new JLabel("<html><b>Keep Minimized<br>While Running:<html/>");
         lbl7.setFont(font);
         c.weightx = 0.0;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -398,7 +398,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         panel1.add(isMinimized, c);
 
         //new requirement
-        JLabel lbl8 = new JLabel("<html><b>Show Word count<br>when Active:<html/>");
+        JLabel lbl8 = new JLabel("<html><b>Show Word Count<br>When Active:<html/>");
         lbl8.setFont(font);
         c.weightx = 0.0;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -1349,7 +1349,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         if (proj != null)
             txt_completion.setText(proj.getRewardCompletion());
         else
-            txt_completion.setText("Take that book and start editing it! Well done!");
+            txt_completion.setText("Take [PROJECT] and start editing! Well done!");
         //
         switch (projID) {
             case 1:
@@ -1805,12 +1805,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Path Not found", "Date Save Error", JOptionPane.ERROR_MESSAGE);
         }
-        int val = JOptionPane.showConfirmDialog(this, projTitle + " saved successfully. \n Do you wish to exit Preferences ?", "Save Preferences", JOptionPane.YES_NO_OPTION);
-        if (val == JOptionPane.YES_OPTION) {
-            //JOptionPane.showMessageDialog(this,"Preferences saved successfully","Save Dialog",JOptionPane.PLAIN_MESSAGE);
-            this.dispose();
-            Start.isWindowShowing = false;
-        }
+        JOptionPane.showMessageDialog(this, projTitle + " saved successfully.", "Save Preferences", JOptionPane.INFORMATION_MESSAGE);
         //getProject(id);
         EnableProjectFields(lists, false);
 
@@ -1841,8 +1836,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         ((JTextField) lists.get(10)).setEnabled(isEnabled);
         ((JTextField) lists.get(11)).setEnabled(isEnabled);
         ((JTextField) lists.get(12)).setEnabled(isEnabled);
-
-
     }
 
 
@@ -1882,23 +1875,31 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         general.setShowCount(showCount);
 
         saveGeneral(configPath, general);
-        int val = JOptionPane.showConfirmDialog(this, "Do you wish to exit Preferences after saving?", "Save Preferences", JOptionPane.YES_NO_OPTION);
-        if (val == JOptionPane.YES_OPTION) {
-            //JOptionPane.showMessageDialog(this,"Preferences saved successfully","Save Dialog",JOptionPane.PLAIN_MESSAGE);
-            this.dispose();
-            Start.isWindowShowing = false;
-        } else {
-            txt_Name.setEnabled(false);
-            txt_email.setEnabled(false);
-            txt_fb.setEnabled(false);
-            txt_twt.setEnabled(false);
-            txt_tz.setEnabled(false);
-            isLaunched.setEnabled(false);
-            isMinimized.setEnabled(false);
-            isShowCount.setEnabled(false);
-            radio_total.setEnabled(false);
-            radio_session.setEnabled(false);
+        JOptionPane.showMessageDialog(this, "Preferences successfully saved.", "Save Preferences", JOptionPane.INFORMATION_MESSAGE);
+
+        txt_Name.setEnabled(false);
+        txt_email.setEnabled(false);
+        txt_fb.setEnabled(false);
+        txt_twt.setEnabled(false);
+        txt_tz.setEnabled(false);
+        isLaunched.setEnabled(false);
+        isMinimized.setEnabled(false);
+        isShowCount.setEnabled(false);
+        radio_total.setEnabled(false);
+        radio_session.setEnabled(false);
+    }
+
+    @Override
+    public void dispose() {
+        for (ActionListener al : btnGeneralSave.getActionListeners()) {
+            btnGeneralSave.removeActionListener(al);
         }
+
+        for (ActionListener al : btnGeneralEdit.getActionListeners()) {
+            btnGeneralEdit.removeActionListener(al);
+        }
+
+        super.dispose();
     }
 
     public static void saveGeneral(String path, General general) {
