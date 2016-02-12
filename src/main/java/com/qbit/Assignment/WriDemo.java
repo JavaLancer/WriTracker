@@ -11,6 +11,8 @@ import org.jnativehook.keyboard.NativeKeyListener;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -39,8 +41,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
     JCheckBox isShowCount;
 
     StandardButton btnGeneralSave = new StandardButton("    Save    ");
-    StandardButton btnGeneralEdit = new StandardButton("    Edit    ");
-    StandardButton btnProjectEdit;
+//    StandardButton btnProjectEdit;
     StandardButton btnProjectSave;
 
     JLabel lblStatus;
@@ -249,6 +250,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         txt_Name.setName("Gen_Name");
         //txt_Name.)
         txt_Name.addFocusListener(this);
+        addTxtFieldListener(txt_Name);
 
         JLabel lbl_bl = new JLabel("");
         //c.insets = new Insets(5,5,5,5);
@@ -280,6 +282,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         txt_email.setName("Gen_Email");
         //txt_Name.)
         txt_email.addFocusListener(this);
+        addTxtFieldListener(txt_email);
 
 
         JLabel lbl3 = new JLabel("<html><b>Time Zone:<html/>");
@@ -309,6 +312,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
                 txt_tz.setSelectedIndex(1);
         }
         panel1.add(txt_tz, c);
+        addComboBoxListener(txt_tz);
 
         JLabel lbl4 = new JLabel("<html><b>Facebook UserName:<html/>");
         lbl4.setFont(font);
@@ -332,6 +336,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         txt_fb.setName("Gen_FB");
         //txt_Name.)
         txt_fb.addFocusListener(this);
+        addTxtFieldListener(txt_fb);
 
 
         JLabel lbl5 = new JLabel("<html><b>Twitter UserName:<html/>");
@@ -356,6 +361,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         txt_twt.setName("Gen_TWT");
         //txt_Name.)
         txt_twt.addFocusListener(this);
+        addTxtFieldListener(txt_twt);
 
         JLabel lbl6 = new JLabel("<html><b>WriTracker Launches<br>At Startup:<html/>");
         lbl6.setFont(font);
@@ -375,6 +381,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridx = 1;
         c.gridy = 5;
         panel1.add(isLaunched, c);
+        addCheckBoxListener(isLaunched);
 
 
         JLabel lbl7 = new JLabel("<html><b>Keep Minimized<br>While Running:<html/>");
@@ -396,6 +403,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridx = 1;
         c.gridy = 6;
         panel1.add(isMinimized, c);
+        addCheckBoxListener(isMinimized);
 
         //new requirement
         JLabel lbl8 = new JLabel("<html><b>Show Word Count<br>When Active:<html/>");
@@ -421,6 +429,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         panWord.add(isShowCount);
         isShowCount.setActionCommand("ShowCount");
         isShowCount.addActionListener(this);
+        addCheckBoxListener(isShowCount);
         boolean isShow = false;
         if (general != null && general.getShowCount() != 0)
             isShow = true;
@@ -431,6 +440,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         //radio_total.setBackground(bgColor);
         panWord.add(radio_total);
         radio_total.setVisible(isShow);
+        addRadioButtonListener(radio_total);
         //if(isShowCount.isSelected())
         //radio_total.setSelected(true);
 
@@ -440,6 +450,8 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         //radio_session.setBackground(bgColor);
         panWord.add(radio_session);
         radio_session.setVisible(isShow);
+        addRadioButtonListener(radio_session);
+
         ButtonGroup wordCountGroup = new ButtonGroup();
         wordCountGroup.add(radio_total);
         wordCountGroup.add(radio_session);
@@ -474,11 +486,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         btnGeneralSave.setVisible(false);
         pnlBottom.add(btnGeneralSave);
 
-        btnGeneralEdit.setActionCommand("GE");  //i.e. General Edit
-        btnGeneralEdit.setFont(font);
-        btnGeneralEdit.addActionListener(this);
-        pnlBottom.add(btnGeneralEdit);
-
         if (showActivate) {
             StandardButton btn_Activate = new StandardButton("    Activate    ");
             btn_Activate.setActionCommand("AC");
@@ -486,17 +493,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             btn_Activate.addActionListener(this);
             pnlBottom.add(btn_Activate);
         }
-
-        txt_Name.setEnabled(false);
-        txt_email.setEnabled(false);
-        txt_fb.setEnabled(false);
-        txt_twt.setEnabled(false);
-        txt_tz.setEnabled(false);
-        isLaunched.setEnabled(false);
-        isMinimized.setEnabled(false);
-        isShowCount.setEnabled(false);
-        radio_total.setEnabled(false);
-        radio_session.setEnabled(false);
 
         //pnlBottom.setBackground(bgColor);
 
@@ -731,8 +727,10 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         panel.add(txt_ProjName[projID - 1], c);
         txt_ProjName[projID - 1].setName("Proj_Title" + (projID));
         txt_ProjName[projID - 1].addFocusListener(this);
-        if (proj != null)
+        if (proj != null) {
             txt_ProjName[projID - 1].setText(proj.getProjectTitle());
+        }
+        addTxtFieldListener(txt_ProjName[projID - 1]);
 
         switch (projID) {
             case 1:
@@ -783,6 +781,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridx = 3;
         c.gridy = 0;
         panel.add(datePicker, c);
+        addDatePickerListener(datePicker);
         //datePicker.setBackground(bgColor);
         if (proj != null) {
             System.out.println("Date tt" + proj.getProjectDeadline());
@@ -841,8 +840,10 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridx = 1;
         c.gridy = 1;
         panel.add(cmb_ProjType, c);
-        if (proj != null)
+        if (proj != null) {
             cmb_ProjType.setSelectedIndex(proj.getProjectType());
+        }
+        addComboBoxListener(cmb_ProjType);
         switch (projID) {
             case 1:
                 proj1Lists.add(cmb_ProjType);
@@ -907,8 +908,10 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridy = 2;
         panel.add(txt_projGoal, c);
         txt_projGoal.setName("Proj_wordGoal");
-        if (proj != null)
+        if (proj != null) {
             txt_projGoal.setText(proj.getWordGoal() + "");
+        }
+        addTxtFieldListener(txt_projGoal);
         //
         switch (projID) {
             case 1:
@@ -977,8 +980,10 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridx = 1;
         c.gridy = 3;
         panel.add(cmb_intervals, c);
-        if (proj != null)
+        if (proj != null) {
             cmb_intervals.setSelectedIndex(proj.getInterval());
+        }
+        addComboBoxListener(cmb_intervals);
         //
         switch (projID) {
             case 1:
@@ -1034,8 +1039,10 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridx = 1;
         c.gridy = 4;
         panel.add(isPost, c);
-        if (proj != null)
+        if (proj != null) {
             isPost.setSelected(proj.isPostSocMedia());
+        }
+        addCheckBoxListener(isPost);
         //
         switch (projID) {
             case 1:
@@ -1077,10 +1084,13 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridy = 5;
         panel.add(txt_1000[projID - 1], c);
         txt_1000[projID - 1].setName("Proj_1000");
-        if (proj != null)
+        if (proj != null) {
             txt_1000[projID - 1].setText(proj.getReward1000());
-        else
+        }
+        else {
             txt_1000[projID - 1].setText("Congratulations! " + Name + " hit 1,000 words!");
+        }
+        addTxtFieldListener(txt_1000[projID - 1]);
         //
         switch (projID) {
             case 1:
@@ -1122,10 +1132,13 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridy = 5;
         panel.add(txt_Milestone_reward, c);
         txt_Milestone_reward.setName("Proj_Mile_rew");
-        if (proj != null)
+        if (proj != null) {
             txt_Milestone_reward.setText(proj.getRewardMilestone());
-        else
+        }
+        else {
             txt_Milestone_reward.setText(Name + " made a milestone writing goal! Kudos are appreciated!");
+        }
+        addTxtFieldListener(txt_Milestone_reward);
         //
         switch (projID) {
             case 1:
@@ -1167,10 +1180,13 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridy = 6;
         panel.add(txt_2000[projID - 1], c);
         txt_2000[projID - 1].setName("Proj_2000");
-        if (proj != null)
+        if (proj != null) {
             txt_2000[projID - 1].setText(proj.getReward2000());
-        else
+        }
+        else {
             txt_2000[projID - 1].setText("Hooray! " + Name + " wrote 2,000 words today!");
+        }
+        addTxtFieldListener(txt_2000[projID - 1]);
         //
         switch (projID) {
             case 1:
@@ -1212,10 +1228,13 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridy = 6;
         panel.add(txt_Milestone_penalty, c);
         txt_Milestone_penalty.setName("Proj_Mil_Pen");
-        if (proj != null)
+        if (proj != null) {
             txt_Milestone_penalty.setText(proj.getPenalty());
-        else
+        }
+        else {
             txt_Milestone_penalty.setText(Name + " missed a milestone writing goal! Encouragement is needed!");
+        }
+        addTxtFieldListener(txt_Milestone_penalty);
         //
         switch (projID) {
             case 1:
@@ -1256,10 +1275,13 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridy = 7;
         panel.add(txt_5000[projID - 1], c);
         txt_5000[projID - 1].setName("Proj_5000");
-        if (proj != null)
+        if (proj != null) {
             txt_5000[projID - 1].setText(proj.getReward5000());
-        else
+        }
+        else {
             txt_5000[projID - 1].setText(Name + " is soaring! 5,000 words written!");
+        }
+        addTxtFieldListener(txt_5000[projID - 1]);
         //
         switch (projID) {
             case 1:
@@ -1300,10 +1322,13 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridy = 8;
         panel.add(txt_10000[projID - 1], c);
         txt_10000[projID - 1].setName("Proj_10000");
-        if (proj != null)
+        if (proj != null) {
             txt_10000[projID - 1].setText(proj.getReward10000());
-        else
+        }
+        else {
             txt_10000[projID - 1].setText(Name + " is burning through the word count. 10,000 words written today!");
+        }
+        addTxtFieldListener(txt_10000[projID - 1]);
         //
         switch (projID) {
             case 1:
@@ -1346,10 +1371,13 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridy = 9;
         panel.add(txt_completion, c);
         txt_completion.setName("Proj_Comp_rew");
-        if (proj != null)
+        if (proj != null) {
             txt_completion.setText(proj.getRewardCompletion());
-        else
+        }
+        else {
             txt_completion.setText("Take [PROJECT] and start editing! Well done!");
+        }
+        addTxtFieldListener(txt_completion);
         //
         switch (projID) {
             case 1:
@@ -1385,14 +1413,14 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         pnlBottom.add(btnProjectSave);
         //pnlBottom.setBackground(bgColor);
 
-        btnProjectEdit = new StandardButton("    Edit    ");
-        btnProjectEdit.setBackground(Color.gray);
-        btnProjectEdit.setForeground(Color.black);
-        btnProjectEdit.setFont(font);
-        pnlBottom.add(btnProjectEdit);
-        btnProjectEdit.setActionCommand(projID + "E");
-        btnProjectEdit.setName("btnProjectEdit" + projID);
-        btnProjectEdit.addActionListener(this);
+//        StandardButton btnProjectEdit = new StandardButton("    Edit    ");
+//        btnProjectEdit.setBackground(Color.gray);
+//        btnProjectEdit.setForeground(Color.black);
+//        btnProjectEdit.setFont(font);
+//        pnlBottom.add(btnProjectEdit);
+//        btnProjectEdit.setActionCommand(projID + "E");
+//        btnProjectEdit.setName("btnProjectEdit" + projID);
+//        btnProjectEdit.addActionListener(this);
         pnlBottom.setOpaque(true);
 
 
@@ -1410,28 +1438,28 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         switch (projID) {
             case 1:
                 proj1Lists.add(btnProjectSave);
-                proj1Lists.add(btnProjectEdit);
-                EnableProjectFields(proj1Lists, false);
+//                proj1Lists.add(btnProjectEdit);
+//                EnableProjectFields(proj1Lists, false);
                 break;
             case 2:
                 proj2Lists.add(btnProjectSave);
-                proj2Lists.add(btnProjectEdit);
-                EnableProjectFields(proj2Lists, false);
+//                proj2Lists.add(btnProjectEdit);
+//                EnableProjectFields(proj2Lists, false);
                 break;
             case 3:
                 proj3Lists.add(btnProjectSave);
-                proj3Lists.add(btnProjectEdit);
-                EnableProjectFields(proj3Lists, false);
+//                proj3Lists.add(btnProjectEdit);
+//                EnableProjectFields(proj3Lists, false);
                 break;
             case 4:
                 proj4Lists.add(btnProjectSave);
-                proj4Lists.add(btnProjectEdit);
-                EnableProjectFields(proj4Lists, false);
+//                proj4Lists.add(btnProjectEdit);
+//                EnableProjectFields(proj4Lists, false);
                 break;
             case 5:
                 proj5Lists.add(btnProjectSave);
-                proj5Lists.add(btnProjectEdit);
-                EnableProjectFields(proj5Lists, false);
+//                proj5Lists.add(btnProjectEdit);
+//                EnableProjectFields(proj5Lists, false);
                 break;
 
             default:
@@ -1440,6 +1468,74 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         //
         //EnableProjectFields(projID==1?proj1Lists:projID==2?proj2Lists:proj3Lists, false);
         return panel;
+    }
+
+    private void addTxtFieldListener(JTextField txtField) {
+        txtField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                fieldChanged();
+            }
+
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                fieldChanged();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                fieldChanged();
+            }
+        });
+    }
+
+    private void addComboBoxListener(JComboBox comboBox) {
+        comboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fieldChanged();
+            }
+        });
+    }
+
+    private void addCheckBoxListener(JCheckBox checkBox) {
+        checkBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fieldChanged();
+            }
+        });
+    }
+
+    private void addRadioButtonListener(JRadioButton radioButton) {
+        radioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fieldChanged();
+            }
+        });
+    }
+
+    private void addDatePickerListener(JDatePickerImpl datePicker) {
+        datePicker.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fieldChanged();
+            }
+        });
+    }
+
+    private void fieldChanged() {
+        if (!btnGeneralSave.isVisible()) {
+            btnGeneralSave.setVisible(true);
+        }
+
+        EditProject(1);
+        EditProject(2);
+        EditProject(3);
+        EditProject(4);
+        EditProject(5);
     }
 
     static boolean proj1SessionStart = true;
@@ -1672,20 +1768,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             EditProject(4);
         if (ae.getActionCommand().equals("5E"))
             EditProject(5);
-        if (ae.getActionCommand().equals("GE")) {
-            txt_Name.setEnabled(true);
-            txt_email.setEnabled(true);
-            txt_fb.setEnabled(true);
-            txt_twt.setEnabled(true);
-            txt_tz.setEnabled(true);
-            isLaunched.setEnabled(true);
-            isMinimized.setEnabled(true);
-            isShowCount.setEnabled(true);
-            radio_total.setEnabled(true);
-            radio_session.setEnabled(true);
-            btnGeneralSave.setVisible(true);
-            btnGeneralEdit.setVisible(false);
-        }
         if (ae.getActionCommand().equals("AC")) {
             ActivateDialog dlgActivate = new ActivateDialog(this);
             dlgActivate.setLocationRelativeTo(this);
@@ -1726,15 +1808,15 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
                 continue;
             }
             StandardButton btn = (StandardButton) obj;
-            if (btn.getName().equals("btnProjectEdit" + id)) {
-                btn.setVisible(false);
-            }
+//            if (btn.getName().equals("btnProjectEdit" + id)) {
+//                btn.setVisible(false);
+//            }
             if (btn.getName().equals("btnProjectSave" + id)) {
                 btn.setVisible(true);
             }
         }
 
-        EnableProjectFields(lists, true);
+//        EnableProjectFields(lists, true);
     }
 
 
@@ -1799,7 +1881,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             FileOutputStream fout = new FileOutputStream(configPath + "\\project" + id + ".ser");
             ObjectOutputStream oos = new ObjectOutputStream(fout);
             oos.writeObject(proj);
-            EnableProjectFields(lists, false);
+//            EnableProjectFields(lists, false);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -1807,36 +1889,36 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         }
         JOptionPane.showMessageDialog(this, projTitle + " saved successfully.", "Save Preferences", JOptionPane.INFORMATION_MESSAGE);
         //getProject(id);
-        EnableProjectFields(lists, false);
+//        EnableProjectFields(lists, false);
 
         for (Object obj : lists) {
             if (!(obj instanceof StandardButton)) {
                 continue;
             }
             StandardButton btn = (StandardButton) obj;
-            if (btn.getName().equals("btnProjectEdit" + id)) {
-                btn.setVisible(true);
-            }
+//            if (btn.getName().equals("btnProjectEdit" + id)) {
+//                btn.setVisible(true);
+//            }
             if (btn.getName().equals("btnProjectSave" + id)) {
                 btn.setVisible(false);
             }
         }
     }
 
-    public void EnableProjectFields(ArrayList<Object> lists, boolean isEnabled) {
-        ((JTextField) lists.get(0)).setEditable(isEnabled);
-        ((JComboBox) lists.get(2)).setEditable(isEnabled);
-        ((JTextField) lists.get(3)).setEditable(isEnabled);
-        ((JComboBox) lists.get(4)).setEditable(isEnabled);
-        ((JCheckBox) lists.get(5)).setEnabled(isEnabled);
-        ((JTextField) lists.get(6)).setEnabled(isEnabled);
-        ((JTextField) lists.get(7)).setEnabled(isEnabled);
-        ((JTextField) lists.get(8)).setEnabled(isEnabled);
-        ((JTextField) lists.get(9)).setEnabled(isEnabled);
-        ((JTextField) lists.get(10)).setEnabled(isEnabled);
-        ((JTextField) lists.get(11)).setEnabled(isEnabled);
-        ((JTextField) lists.get(12)).setEnabled(isEnabled);
-    }
+//    public void EnableProjectFields(ArrayList<Object> lists, boolean isEnabled) {
+//        ((JTextField) lists.get(0)).setEditable(isEnabled);
+//        ((JComboBox) lists.get(2)).setEditable(isEnabled);
+//        ((JTextField) lists.get(3)).setEditable(isEnabled);
+//        ((JComboBox) lists.get(4)).setEditable(isEnabled);
+//        ((JCheckBox) lists.get(5)).setEnabled(isEnabled);
+//        ((JTextField) lists.get(6)).setEnabled(isEnabled);
+//        ((JTextField) lists.get(7)).setEnabled(isEnabled);
+//        ((JTextField) lists.get(8)).setEnabled(isEnabled);
+//        ((JTextField) lists.get(9)).setEnabled(isEnabled);
+//        ((JTextField) lists.get(10)).setEnabled(isEnabled);
+//        ((JTextField) lists.get(11)).setEnabled(isEnabled);
+//        ((JTextField) lists.get(12)).setEnabled(isEnabled);
+//    }
 
 
     public void SaveGeneralTab() {
@@ -1847,7 +1929,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         }
 
         btnGeneralSave.setVisible(false);
-        btnGeneralEdit.setVisible(true);
 
         //adding dialog box to asking for save
 
@@ -1877,26 +1958,22 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         saveGeneral(configPath, general);
         JOptionPane.showMessageDialog(this, "Preferences successfully saved.", "Save Preferences", JOptionPane.INFORMATION_MESSAGE);
 
-        txt_Name.setEnabled(false);
-        txt_email.setEnabled(false);
-        txt_fb.setEnabled(false);
-        txt_twt.setEnabled(false);
-        txt_tz.setEnabled(false);
-        isLaunched.setEnabled(false);
-        isMinimized.setEnabled(false);
-        isShowCount.setEnabled(false);
-        radio_total.setEnabled(false);
-        radio_session.setEnabled(false);
+//        txt_Name.setEnabled(false);
+//        txt_email.setEnabled(false);
+//        txt_fb.setEnabled(false);
+//        txt_twt.setEnabled(false);
+//        txt_tz.setEnabled(false);
+//        isLaunched.setEnabled(false);
+//        isMinimized.setEnabled(false);
+//        isShowCount.setEnabled(false);
+//        radio_total.setEnabled(false);
+//        radio_session.setEnabled(false);
     }
 
     @Override
     public void dispose() {
         for (ActionListener al : btnGeneralSave.getActionListeners()) {
             btnGeneralSave.removeActionListener(al);
-        }
-
-        for (ActionListener al : btnGeneralEdit.getActionListeners()) {
-            btnGeneralEdit.removeActionListener(al);
         }
 
         super.dispose();
