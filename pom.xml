@@ -20,6 +20,10 @@
                     <fork>false</fork>
                     <optimize>true</optimize>
                     <encoding>UTF-8</encoding>
+                    <!--This is needed until compiler plugin can support Java 8-->
+                    <compilerArguments>
+                        <bootclasspath>${sun.boot.class.path}${path.separator}${java.home}/lib/jfxrt.jar</bootclasspath>
+                    </compilerArguments>
                 </configuration>
             </plugin>
             <plugin>

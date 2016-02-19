@@ -1,6 +1,7 @@
 package com.qbit.Assignment;
 
 import com.qbit.Dialogs.ActivateDialog;
+import com.qbit.Dialogs.SimpleBrowser;
 import com.qbit.Objects.General;
 import com.qbit.Objects.Project;
 import facebook4j.Facebook;
@@ -1840,22 +1841,31 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         facebook = new FacebookFactory().getInstance();
         facebook.setOAuthAppId("1509940699313820", "5c9700b49ea2cd74432d6b101074196f");
         facebook.setOAuthPermissions("publish_actions");
-        String authorizationUrl = facebook.getOAuthAuthorizationURL("http://www.example.com/oauth_callback/");
-        try {
-            Desktop.getDesktop().browse(URI.create(authorizationUrl));
-        } catch (IOException e) {
+        //        try {
+//            Desktop.getDesktop().browse(URI.create(authorizationUrl));
+//        } catch (IOException e) {
             // Log something
-        }
-        String code = JOptionPane.showInputDialog(null, "Enter code", "FB Authorize Code", JOptionPane.INFORMATION_MESSAGE);
+//        }
 
-        try {
-            AccessToken token = facebook.getOAuthAccessToken(code, "http://www.example.com/oauth_callback/");
-            facebook.setOAuthAccessToken(new AccessToken(token.getToken(), token.getExpires()));
-        } catch (FacebookException e) {
-            // Log something
-        }
+        final String authorizationURL = facebook.getOAuthAuthorizationURL("http://www.example.com/oauth_callback/");
 
-        saveAccessToken(facebook.getOAuthAccessToken().getToken());
+        SimpleBrowser fbBrowser = new SimpleBrowser();
+        fbBrowser.loadURL(authorizationURL);
+        fbBrowser.setVisible(true);
+    }
+
+    public static void getAccessToken(String code) {
+        if (SimpleBrowser.AUTH_CODE != null || !SimpleBrowser.AUTH_CODE.equals("")) {
+            try {
+                AccessToken token = facebook.getOAuthAccessToken(code, "http://www.example.com/oauth_callback/");
+                facebook.setOAuthAccessToken(new AccessToken(token.getToken(), token.getExpires()));
+            } catch (FacebookException e) {
+                // Log something
+            }
+            saveAccessToken(facebook.getOAuthAccessToken().getToken());
+        } else {
+            JOptionPane.showMessageDialog(null, "Unable to communicate with Facebook, please try again.", "Error Connecting", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public static void saveAccessToken(String token) {
