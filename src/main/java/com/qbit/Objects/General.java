@@ -17,6 +17,7 @@ public class General implements Serializable{
 	private int ShowCount;  // Values 0 = no show 1= Total Words 2=Session Words
 	private boolean isActivated;
     private Date firstSaveDate;
+	private String accessToken;
 
 	public String getFullName() {
 		return fullName;
@@ -83,5 +84,13 @@ public class General implements Serializable{
 
     public void setFirstSaveDate(Date firstSaveDate) {
         this.firstSaveDate = firstSaveDate;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 }

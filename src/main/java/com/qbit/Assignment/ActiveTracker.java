@@ -600,10 +600,7 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,ActionLi
 			prop.load(new FileReader(configPath+"\\"+propFileName));
 			
 			//Facebook Post
-			String FBAppID = prop.getProperty("FBAppID");
-			String FBAppSecret = prop.getProperty("FBAppSecret");
-			String FBAccessToken = prop.getProperty("FBAccessToken");
-			FacebookController.PostOnFB(FBAppID, FBAppSecret, FBAccessToken, str);
+			WriDemo.postToFacebook(str);
 			
 			//Twitter Post
 			String TwtConsumerKey = prop.getProperty("TWT_consumerKey");

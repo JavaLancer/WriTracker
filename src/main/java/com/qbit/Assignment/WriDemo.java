@@ -3,6 +3,14 @@ package com.qbit.Assignment;
 import com.qbit.Dialogs.ActivateDialog;
 import com.qbit.Objects.General;
 import com.qbit.Objects.Project;
+import facebook4j.Facebook;
+import facebook4j.FacebookException;
+import facebook4j.FacebookFactory;
+import facebook4j.RawAPIResponse;
+import facebook4j.auth.AccessToken;
+import facebook4j.auth.NullAuthorization;
+import facebook4j.internal.org.json.JSONException;
+import facebook4j.internal.org.json.JSONObject;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -18,10 +26,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class WriDemo extends JFrame implements NativeKeyListener, ActionListener, FocusListener, ItemListener {
@@ -29,6 +34,8 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
     private JTabbedPane tabbedPane;
     private String names[];
     private boolean showActivate;
+
+    public static Facebook facebook = new FacebookFactory().getInstance();
 
     //general Tab
     JTextField txt_Name;
@@ -71,7 +78,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
                 System.out.println("Time zone id" + easternTimeZone);
             }
         }
-        //initUI();
     }
 
     public void showActivate(boolean showActivate) {
@@ -586,6 +592,18 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         label3.setName("Support");
         goWebsite(label3);
 
+
+        StandardButton btnFacebook = new StandardButton("Connect To Facebook");
+        btnFacebook.setBackground(Color.gray);
+        btnFacebook.setFont(font);
+        btnFacebook.setForeground(Color.black);
+        btnFacebook.setActionCommand("FB");
+        btnFacebook.setName("btnFacebook");
+        btnFacebook.addActionListener(this);
+        btnFacebook.setVisible(true);
+
+        leftPanel.add(Box.createRigidArea(new Dimension(5, 25)));
+        leftPanel.add(btnFacebook);
 
         //design the left panel
 
@@ -1615,6 +1633,14 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
                 //e.printStackTrace();
             }
         }
+
+        if (facebook.getAuthorization() instanceof NullAuthorization) {
+            facebook = new FacebookFactory().getInstance();
+            facebook.setOAuthAppId("1509940699313820", "5c9700b49ea2cd74432d6b101074196f");
+            facebook.setOAuthPermissions("publish_actions");
+            facebook.setOAuthAccessToken(new AccessToken(general.getAccessToken(), 100000L));
+        }
+
         initUI(general);
         setVisible(true);
     }
@@ -1773,12 +1799,81 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             dlgActivate.setLocationRelativeTo(this);
             dlgActivate.setVisible(true);
         }
+        if (ae.getActionCommand().equals("FB")) {
+            connectToFacebook();
+        }
         //this.dispose();
         if (ae.getActionCommand().equalsIgnoreCase("ShowCount")) {
             radio_session.setVisible(isShowCount.isSelected());
             radio_total.setVisible(isShowCount.isSelected());
         }
 
+    }
+
+    public static void postToFacebook(String message) {
+        Map<String, String> map = new HashMap<>();
+        map.put("input_token", facebook.getOAuthAccessToken().getToken());
+        boolean isValid = false;
+        try {
+            RawAPIResponse response = facebook.rawAPI().callGetAPI("debug_token", map);
+            JSONObject accessTokenInfo = response.asJSONObject();
+            JSONObject data = accessTokenInfo.getJSONObject("data");
+            isValid = data.getBoolean("is_valid");
+        } catch (FacebookException e) {
+            // Log something
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (!isValid) {
+            connectToFacebook();
+        }
+
+        try {
+            facebook.postStatusMessage(message);
+        } catch (FacebookException e) {
+            // Log something
+        }
+    }
+
+    public static void connectToFacebook() {
+        facebook = new FacebookFactory().getInstance();
+        facebook.setOAuthAppId("1509940699313820", "5c9700b49ea2cd74432d6b101074196f");
+        facebook.setOAuthPermissions("publish_actions");
+        String authorizationUrl = facebook.getOAuthAuthorizationURL("http://www.example.com/oauth_callback/");
+        try {
+            Desktop.getDesktop().browse(URI.create(authorizationUrl));
+        } catch (IOException e) {
+            // Log something
+        }
+        String code = JOptionPane.showInputDialog(null, "Enter code", "FB Authorize Code", JOptionPane.INFORMATION_MESSAGE);
+
+        try {
+            AccessToken token = facebook.getOAuthAccessToken(code, "http://www.example.com/oauth_callback/");
+            facebook.setOAuthAccessToken(new AccessToken(token.getToken(), token.getExpires()));
+        } catch (FacebookException e) {
+            // Log something
+        }
+
+        saveAccessToken(facebook.getOAuthAccessToken().getToken());
+    }
+
+    public static void saveAccessToken(String token) {
+        General general = null;
+        ObjectInputStream ois;
+        try {
+            FileInputStream fin = new FileInputStream(configPath+"\\general.ser");
+            ois = new ObjectInputStream(fin);
+            general = (General) ois.readObject();
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+
+        if (general != null) {
+            general.setAccessToken(token);
+        }
+
+        saveGeneral(configPath, general);
     }
 
     public void EditProject(int id) {
