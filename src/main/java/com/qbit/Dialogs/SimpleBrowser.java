@@ -1,7 +1,8 @@
 package com.qbit.Dialogs;
 
 
-import com.qbit.Assignment.WriDemo;
+import com.qbit.Assignment.FacebookController;
+import com.qbit.Assignment.TwitterController;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -79,7 +80,7 @@ public class SimpleBrowser extends JFrame {
 
         getContentPane().add(panel);
 
-        setPreferredSize(new Dimension(1024, 750));
+        setPreferredSize(new Dimension(1075, 850));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
     }
@@ -122,7 +123,12 @@ public class SimpleBrowser extends JFrame {
                     public void changed(ObservableValue<? extends String> ov, String oldValue, final String newValue) {
                         if (newValue.contains("http://www.example.com/oauth_callback/?code=")) {
                             AUTH_CODE = newValue.substring(44);
-                            WriDemo.getAccessToken(AUTH_CODE);
+                            FacebookController.getAccessToken(AUTH_CODE);
+                            close();
+                        }
+                        if (newValue.contains("http://www.example.com/oauth_callback/?oauth_token=")) {
+                            AUTH_CODE = newValue.substring(94);
+                            TwitterController.getAccessToken(AUTH_CODE);
                             close();
                         }
                         SwingUtilities.invokeLater(new Runnable() {
@@ -198,7 +204,7 @@ public class SimpleBrowser extends JFrame {
 
     public void close() {
         this.setVisible(false);
-        this.dispose();
+//        this.dispose();
     }
 
 //    public static void main(String[] args) {

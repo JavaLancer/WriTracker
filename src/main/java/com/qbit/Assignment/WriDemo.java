@@ -1,22 +1,17 @@
 package com.qbit.Assignment;
 
 import com.qbit.Dialogs.ActivateDialog;
-import com.qbit.Dialogs.SimpleBrowser;
 import com.qbit.Objects.General;
 import com.qbit.Objects.Project;
-import facebook4j.Facebook;
-import facebook4j.FacebookException;
 import facebook4j.FacebookFactory;
-import facebook4j.RawAPIResponse;
 import facebook4j.auth.AccessToken;
 import facebook4j.auth.NullAuthorization;
-import facebook4j.internal.org.json.JSONException;
-import facebook4j.internal.org.json.JSONObject;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
+import twitter4j.TwitterFactory;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -27,7 +22,10 @@ import java.awt.event.*;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class WriDemo extends JFrame implements NativeKeyListener, ActionListener, FocusListener, ItemListener {
@@ -35,8 +33,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
     private JTabbedPane tabbedPane;
     private String names[];
     private boolean showActivate;
-
-    public static Facebook facebook = new FacebookFactory().getInstance();
 
     //general Tab
     JTextField txt_Name;
@@ -605,6 +601,19 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
 
         leftPanel.add(Box.createRigidArea(new Dimension(5, 25)));
         leftPanel.add(btnFacebook);
+
+
+        StandardButton btnTwitter = new StandardButton("  Connect To Twitter   ");
+        btnTwitter.setBackground(Color.gray);
+        btnTwitter.setFont(font);
+        btnTwitter.setForeground(Color.black);
+        btnTwitter.setActionCommand("TW");
+        btnTwitter.setName("btnTwitter");
+        btnTwitter.addActionListener(this);
+        btnTwitter.setVisible(true);
+
+        leftPanel.add(Box.createRigidArea(new Dimension(5, 25)));
+        leftPanel.add(btnTwitter);
 
         //design the left panel
 
@@ -1635,11 +1644,17 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             }
         }
 
-        if (facebook.getAuthorization() instanceof NullAuthorization) {
-            facebook = new FacebookFactory().getInstance();
-            facebook.setOAuthAppId("1509940699313820", "5c9700b49ea2cd74432d6b101074196f");
-            facebook.setOAuthPermissions("publish_actions");
-            facebook.setOAuthAccessToken(new AccessToken(general.getAccessToken(), 100000L));
+        if (FacebookController.FACEBOOK_INSTANCE.getAuthorization() instanceof NullAuthorization && general != null) {
+            FacebookController.FACEBOOK_INSTANCE = new FacebookFactory().getInstance();
+            FacebookController.FACEBOOK_INSTANCE.setOAuthAppId("1509940699313820", "5c9700b49ea2cd74432d6b101074196f");
+            FacebookController.FACEBOOK_INSTANCE.setOAuthPermissions("publish_actions");
+            FacebookController.FACEBOOK_INSTANCE.setOAuthAccessToken(new AccessToken(general.getFbAccessToken(), 100000L));
+        }
+
+        if (TwitterController.TWITTER_INSTANCE.getAuthorization() instanceof twitter4j.auth.NullAuthorization && general != null && general.getTwAccessToken() != null) {
+            TwitterController.TWITTER_INSTANCE = new TwitterFactory().getInstance();
+            TwitterController.TWITTER_INSTANCE.setOAuthConsumer("gfLcjIGfRenvVWNyxyQnooShC", "bHoR3N8Wa8DjPm44oz21RuK44Se4lnFcu4a6pxZfecRdtg5u1m");
+            TwitterController.TWITTER_INSTANCE.setOAuthAccessToken(new twitter4j.auth.AccessToken(general.getTwAccessToken(), general.getTwAccessSecret()));
         }
 
         initUI(general);
@@ -1801,7 +1816,10 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             dlgActivate.setVisible(true);
         }
         if (ae.getActionCommand().equals("FB")) {
-            connectToFacebook();
+            FacebookController.connectToFacebook();
+        }
+        if (ae.getActionCommand().equals("TW")) {
+            TwitterController.connectToTwitter();
         }
         //this.dispose();
         if (ae.getActionCommand().equalsIgnoreCase("ShowCount")) {
@@ -1811,64 +1829,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
 
     }
 
-    public static void postToFacebook(String message) {
-        Map<String, String> map = new HashMap<>();
-        map.put("input_token", facebook.getOAuthAccessToken().getToken());
-        boolean isValid = false;
-        try {
-            RawAPIResponse response = facebook.rawAPI().callGetAPI("debug_token", map);
-            JSONObject accessTokenInfo = response.asJSONObject();
-            JSONObject data = accessTokenInfo.getJSONObject("data");
-            isValid = data.getBoolean("is_valid");
-        } catch (FacebookException e) {
-            // Log something
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        if (!isValid) {
-            connectToFacebook();
-        }
-
-        try {
-            facebook.postStatusMessage(message);
-        } catch (FacebookException e) {
-            // Log something
-        }
-    }
-
-    public static void connectToFacebook() {
-        facebook = new FacebookFactory().getInstance();
-        facebook.setOAuthAppId("1509940699313820", "5c9700b49ea2cd74432d6b101074196f");
-        facebook.setOAuthPermissions("publish_actions");
-        //        try {
-//            Desktop.getDesktop().browse(URI.create(authorizationUrl));
-//        } catch (IOException e) {
-            // Log something
-//        }
-
-        final String authorizationURL = facebook.getOAuthAuthorizationURL("http://www.example.com/oauth_callback/");
-
-        SimpleBrowser fbBrowser = new SimpleBrowser();
-        fbBrowser.loadURL(authorizationURL);
-        fbBrowser.setVisible(true);
-    }
-
-    public static void getAccessToken(String code) {
-        if (SimpleBrowser.AUTH_CODE != null || !SimpleBrowser.AUTH_CODE.equals("")) {
-            try {
-                AccessToken token = facebook.getOAuthAccessToken(code, "http://www.example.com/oauth_callback/");
-                facebook.setOAuthAccessToken(new AccessToken(token.getToken(), token.getExpires()));
-            } catch (FacebookException e) {
-                // Log something
-            }
-            saveAccessToken(facebook.getOAuthAccessToken().getToken());
-        } else {
-            JOptionPane.showMessageDialog(null, "Unable to communicate with Facebook, please try again.", "Error Connecting", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    public static void saveAccessToken(String token) {
+    public static void saveAccessToken(String token, String secret, String type) {
         General general = null;
         ObjectInputStream ois;
         try {
@@ -1880,7 +1841,14 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         }
 
         if (general != null) {
-            general.setAccessToken(token);
+            if (type.equals("Facebook")) {
+                general.setFbAccessToken(token);
+            }
+
+            if (type.equals("Twitter")) {
+                general.setTwAccessToken(token);
+                general.setTwAccessSecret(secret);
+            }
         }
 
         saveGeneral(configPath, general);

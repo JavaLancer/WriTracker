@@ -17,7 +17,9 @@ public class General implements Serializable{
 	private int ShowCount;  // Values 0 = no show 1= Total Words 2=Session Words
 	private boolean isActivated;
     private Date firstSaveDate;
-	private String accessToken;
+	private String fbAccessToken;
+	private String twAccessToken = "";
+    private String twAccessSecret = "";
 
 	public String getFullName() {
 		return fullName;
@@ -86,11 +88,27 @@ public class General implements Serializable{
         this.firstSaveDate = firstSaveDate;
     }
 
-    public String getAccessToken() {
-        return accessToken;
+    public String getFbAccessToken() {
+        return fbAccessToken;
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    public void setFbAccessToken(String fbAccessToken) {
+        this.fbAccessToken = fbAccessToken;
+    }
+
+    public String getTwAccessToken() {
+        return twAccessToken;
+    }
+
+    public void setTwAccessToken(String twAccessToken) {
+        this.twAccessToken = twAccessToken;
+    }
+
+    public String getTwAccessSecret() {
+        return twAccessSecret;
+    }
+
+    public void setTwAccessSecret(String twAccessSecret) {
+        this.twAccessSecret = twAccessSecret;
     }
 }

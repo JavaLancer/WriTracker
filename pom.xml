@@ -6,7 +6,7 @@
 
     <groupId>WriTracker</groupId>
     <artifactId>WriTrackerBeta</artifactId>
-    <version>1.4</version>
+    <version>1.5</version>
     <build>
         <defaultGoal>install</defaultGoal>
         <plugins>
@@ -71,23 +71,22 @@
         </dependency>
         <dependency>
             <groupId>org.twitter4j</groupId>
-            <artifactId>twitter4j-async</artifactId>
-            <version>4.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.twitter4j</groupId>
-            <artifactId>twitter4j-examples</artifactId>
-            <version>4.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.twitter4j</groupId>
-            <artifactId>twitter4j-media-support</artifactId>
-            <version>4.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.twitter4j</groupId>
-            <artifactId>twitter4j-stream</artifactId>
-            <version>4.0.4</version>
+            <artifactId>twitter4j-core</artifactId>
+            <version>[4.0,)</version>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>twitter4j.org</id>
+            <name>twitter4j.org Repository</name>
+            <url>http://twitter4j.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>
