@@ -534,12 +534,20 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             tabbedPane.addTab("Project 3", getProject(3));
         //for porject 4 and 5
         //we will add a condition here for license version
-        if (project4 != null && general != null && general.isActivated())
-            tabbedPane.addTab(project4.getProjectTitle(), getProject(4));
-        //pnl_Proj3 = getProject(3);
-        if (project5 != null && general != null && general.isActivated())
-            tabbedPane.addTab(project5.getProjectTitle(), getProject(5));
-        //
+        if (general != null && general.isActivated()) {
+            if (project4 != null) {
+                tabbedPane.addTab(project4.getProjectTitle(), getProject(4));
+            } else {
+                tabbedPane.addTab("Project 4", getProject(4));
+            }
+
+            if (project5 != null) {
+                tabbedPane.addTab(project5.getProjectTitle(), getProject(5));
+            } else {
+                tabbedPane.addTab("Project 5", getProject(5));
+            }
+        }
+
         topPanel.add(tabbedPane, BorderLayout.CENTER);
         setSize(1300, 600);
         setLocationRelativeTo(null);
@@ -757,6 +765,8 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         txt_ProjName[projID - 1].addFocusListener(this);
         if (proj != null) {
             txt_ProjName[projID - 1].setText(proj.getProjectTitle());
+        } else {
+            txt_ProjName[projID - 1].setText("Project " + projID);
         }
         addTxtFieldListener(txt_ProjName[projID - 1]);
 
