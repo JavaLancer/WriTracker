@@ -11,11 +11,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Properties;
 import java.util.Timer;
 
 /*
@@ -49,33 +47,7 @@ public class Start implements ActionListener, MenuListener {
         } catch (Exception e) {
             // handle exception
         }
-        //
-        String configPath = System.getenv("WRITE_TRACK_HOME");
-        if (configPath == null)
-            configPath = "C:\\Config";
-        System.out.println("ConfigPath" + configPath);
-        try {
-            File f = new File(configPath + "\\media.properties");
-            if (!f.exists() && !f.isDirectory()) {
 
-                Properties props = new Properties();
-                FileOutputStream fos = new FileOutputStream(configPath + "\\media.properties");
-                props.setProperty("FBAppID", "");
-                props.setProperty("FBAppSecret", "");
-                props.setProperty("FBAccessToken", "");
-                props.setProperty("TWT_consumerKey", "");
-                props.setProperty("TWT_consumerSecret", "");
-                props.setProperty("TWT_accessToken", "");
-                props.setProperty("TWT_accessTokenSecret", "");
-                //writing properites into properties file from Java
-                props.store(fos, "Please enter the Facebook and twitter tokens in the below fields");
-
-                fos.close();
-            }
-        } catch (Exception c) {
-            c.printStackTrace();
-        }
-        //
         Start start = new Start();
         start.init();
     }
@@ -439,8 +411,19 @@ public class Start implements ActionListener, MenuListener {
         // editMenu.show(this, 20, 20);
     }
 
-    //
+    private static void setConfigPath() {
+        String write_track_home = System.getenv("WRITE_TRACK_HOME");
+        if (write_track_home == null) {
+            configPath = "C:\\Config";
+        } else {
+            configPath = write_track_home + "\\Config";
+        }
 
+        File configFile = new File(configPath);
+        if (!configFile.exists()) {
+            configFile.mkdir();
+        }
+    }
 
     public static String configPath;
     static Project project1;
@@ -457,10 +440,7 @@ public class Start implements ActionListener, MenuListener {
 	 * The project object is directly saved so as to ensure that the user cant change in background.
 	 */
     public void loadFiles() {
-        configPath = System.getenv("WRITE_TRACK_HOME");
-        if (configPath == null)
-            configPath = "C:\\Config";
-        mytracker.configPath = configPath;
+        setConfigPath();
         ObjectInputStream ois;
 
         try {

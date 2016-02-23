@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="6.0.4" transformSequenceNumber="5">
-  <directoryPresets config="./src/main/resources/images" />
+  <directoryPresets config="../src/main/resources/images" />
   <application name="Write Tracker" distributionSourceDir="" applicationId="5255-5081-4503-3023" mediaDir="." mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="WriTracker" publisher="Electric Vicuna Production" publisherWeb="http://www.writracker.com" version="1.0.0" allPathsRelative="true" backupOnSave="true" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="cb13cdd8e7635925" javaMinVersion="1.8" javaMaxVersion="1.8" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -25,7 +25,7 @@
       <mountPoint id="22" root="" location="" mode="755" />
     </mountPoints>
     <entries>
-      <dirEntry mountPoint="22" file="./target" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="direct" subDirectory="target" excludeSuffixes=".java" dirMode="755" overrideDirMode="false">
+      <dirEntry mountPoint="22" file="./../target" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="direct" subDirectory="target" excludeSuffixes=".java" dirMode="755" overrideDirMode="false">
         <exclude>
           <entry location="archive-tmp" fileType="regular" />
           <entry location="classes" fileType="regular" />
@@ -39,7 +39,7 @@
     <components />
   </files>
   <launchers>
-    <launcher name="WriteTracker" id="23" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="" useCustomMacosExecutableName="false" customMacosExecutableName="">
+    <launcher name="WriteTracker" id="23" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="WriTracker" icnsFile="" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="" useCustomMacosExecutableName="false" customMacosExecutableName="">
       <executable name="WriteTracker" type="1" iconSet="true" iconFile="" executableDir="" redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="false">
         <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
       </executable>
@@ -68,7 +68,7 @@
         <content />
       </infoPlist>
       <iconImageFiles>
-        <file path="./src/main/resources/images/WW.png" />
+        <file path="../src/main/resources/images/WW.png" />
       </iconImageFiles>
     </launcher>
   </launchers>
@@ -80,14 +80,14 @@
       <customAttributes />
     </autoUpdate>
     <applications>
-      <application name="" id="installer" customizedId="" beanClass="com.install4j.runtime.beans.applications.InstallerApplication" enabled="true" commentSet="false" comment="" actionElevationType="none" fileset="" customIcnsFile="" customIcoFile="" macEntitlementsFile="" automaticLauncherIntegration="false" launchMode="startupFirstWindow" launchInNewProcess="false" launchSchedule="updateSchedule" allLaunchers="true">
+      <application name="" id="installer" customizedId="" beanClass="com.install4j.runtime.beans.applications.InstallerApplication" enabled="true" commentSet="false" comment="" actionElevationType="elevated" fileset="" customIcnsFile="" customIcoFile="" macEntitlementsFile="" automaticLauncherIntegration="false" launchMode="startupFirstWindow" launchInNewProcess="false" launchSchedule="updateSchedule" allLaunchers="true">
         <serializedBean>
           <java class="java.beans.XMLDecoder">
             <object class="com.install4j.runtime.beans.applications.InstallerApplication" id="InstallerApplication0">
               <void property="customIconImageFiles">
                 <void method="add">
                   <object class="com.install4j.api.beans.ExternalFile">
-                    <string>./src/main/resources/images/WW.png</string>
+                    <string>./../src/main/resources/images/WW.png</string>
                   </object>
                 </void>
               </void>
@@ -114,10 +114,14 @@
             <preActivation />
             <postActivation />
             <actions>
-              <action name="" id="13" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.RequestPrivilegesAction" enabled="true" commentSet="false" comment="" actionElevationType="none" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+              <action name="" id="13" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.RequestPrivilegesAction" enabled="true" commentSet="false" comment="" actionElevationType="none" rollbackBarrier="false" multiExec="false" failureStrategy="3" errorMessage="">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.misc.RequestPrivilegesAction" />
+                    <object class="com.install4j.runtime.beans.actions.misc.RequestPrivilegesAction">
+                      <void property="obtainIfNormalWin">
+                        <boolean>true</boolean>
+                      </void>
+                    </object>
                   </java>
                 </serializedBean>
                 <condition />
@@ -141,7 +145,7 @@
                   </void>
                   <void property="bannerImageFile">
                     <object class="com.install4j.api.beans.ExternalFile">
-                      <string>./src/main/resources/images/Logo.png</string>
+                      <string>./../src/main/resources/images/Logo.png</string>
                     </object>
                   </void>
                 </object>
@@ -183,7 +187,7 @@
                       <void method="put">
                         <string>en</string>
                         <object class="com.install4j.api.beans.ExternalFile">
-                          <string>./installer/LicenseAgreement.txt</string>
+                          <string>./LicenseAgreement.txt</string>
                         </object>
                       </void>
                     </void>
@@ -228,6 +232,21 @@
                 </serializedBean>
                 <condition>context.getVariable("sys.responseFile") == null</condition>
               </action>
+              <action name="" id="71" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.ModifyEnvironmentVariableAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.misc.ModifyEnvironmentVariableAction">
+                      <void property="value">
+                        <string>${installer:sys.installationDir}</string>
+                      </void>
+                      <void property="variableName">
+                        <string>WRITE_TRACK_HOME</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
             </actions>
             <formComponents />
           </screen>
@@ -244,7 +263,7 @@
             <actions />
             <formComponents />
           </screen>
-          <screen name="" id="7" customizedId="" beanClass="com.install4j.runtime.beans.screens.StandardProgramGroupScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+          <screen name="" id="7" customizedId="" beanClass="com.install4j.runtime.beans.screens.StandardProgramGroupScreen" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
                 <object class="com.install4j.runtime.beans.screens.StandardProgramGroupScreen">
@@ -261,7 +280,7 @@
             <actions />
             <formComponents />
           </screen>
-          <screen name="" id="8" customizedId="" beanClass="com.install4j.runtime.beans.screens.InstallationScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="true" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+          <screen name="" id="8" customizedId="" beanClass="com.install4j.runtime.beans.screens.InstallationScreen" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="true" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
                 <object class="com.install4j.runtime.beans.screens.InstallationScreen" />
@@ -321,7 +340,7 @@
                   </void>
                   <void property="bannerImageFile">
                     <object class="com.install4j.api.beans.ExternalFile">
-                      <string>./src/main/resources/images/Logo.png</string>
+                      <string>./../src/main/resources/images/Logo.png</string>
                     </object>
                   </void>
                 </object>
@@ -331,8 +350,51 @@
             <validation />
             <preActivation />
             <postActivation />
-            <actions />
-            <formComponents />
+            <actions>
+              <action name="" id="72" customizedId="" beanClass="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction">
+                      <void property="file">
+                        <object class="java.io.File">
+                          <string>WriteTracker</string>
+                        </object>
+                      </void>
+                      <void property="name">
+                        <string>${compiler:sys.fullName}</string>
+                      </void>
+                      <void property="startIn">
+                        <object class="java.io.File">
+                          <string>${installer:sys.installationDir}</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>context.getBooleanVariable("createDesktopLinkAction")</condition>
+              </action>
+            </actions>
+            <formComponents>
+              <formComponent name="Add a desktop link" id="73" customizedId="" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
+                      <void property="checkboxText">
+                        <string>${i18n:CreateDesktopIcon}</string>
+                      </void>
+                      <void property="initiallySelected">
+                        <boolean>true</boolean>
+                      </void>
+                      <void property="variableName">
+                        <string>createDesktopLinkAction</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <initScript />
+                <visibilityScript />
+              </formComponent>
+            </formComponents>
           </screen>
         </screens>
       </application>

@@ -1585,9 +1585,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
 
     public void ShowUI() {
         //
-        configPath = System.getenv("WRITE_TRACK_HOME");
-        if (configPath == null)
-            configPath = "C:\\Config";
+        setConfigPath();
         System.out.println("ConfigPath" + configPath);
         //get the pref file
         ObjectInputStream ois;
@@ -1671,6 +1669,20 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         setVisible(true);
     }
 
+    private static void setConfigPath() {
+        String write_track_home = System.getenv("WRITE_TRACK_HOME");
+        if (write_track_home == null) {
+            configPath = "C:\\Config";
+        } else {
+            configPath = write_track_home + "\\Config";
+        }
+
+        File configFile = new File(configPath);
+        if (!configFile.exists()) {
+            configFile.mkdir();
+        }
+    }
+
     public static String configPath;
     public static General general;
     public static Project project1;
@@ -1681,9 +1693,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
 
     public static void main(String[] args) {
         //Get the WriteTracker Home
-        configPath = System.getenv("WRITE_TRACK_HOME");
-        if (configPath == null)
-            configPath = "C:\\Config";
+        setConfigPath();
         System.out.println("ConfigPath" + configPath);
         //get the pref file
         ObjectInputStream ois;
