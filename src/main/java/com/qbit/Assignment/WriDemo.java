@@ -387,7 +387,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         addCheckBoxListener(isLaunched);
 
 
-        JLabel lbl7 = new JLabel("<html><b>Keep Minimized<br>While Running:<html/>");
+        JLabel lbl7 = new JLabel("<html><b>Hide preferences<br>on startup:<html/>");
         lbl7.setFont(font);
         c.weightx = 0.0;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -400,7 +400,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         isMinimized.setOpaque(false);
         //isMinimized.setBackground(bgColor);
         if (general != null)
-            isMinimized.setSelected(general.isMinimized());
+            isMinimized.setSelected(general.isHidePreferencesOnStart());
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 0.5;
         c.gridx = 1;
@@ -2032,7 +2032,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         general.setTwitUserName(txt_twt.getText().trim());
         general.setTimeZone(txt_tz.getSelectedIndex());
         general.setLaunchStartUp(isLaunched.isSelected());
-        general.setMinimized(isMinimized.isSelected());
+        general.setHidePreferencesOnStart(isMinimized.isSelected());
         if (Start.general == null || Start.general.getFirstSaveDate() == null) {
             general.setFirstSaveDate(new Date());
         } else {

@@ -164,6 +164,19 @@ public class Start implements ActionListener, MenuListener {
             }
         });
         trayIcon.addActionListener(this);
+
+
+        if (general == null || !general.isHidePreferencesOnStart()) {
+            demo.ShowUI();
+            demo.toFront();
+            isWindowShowing = true;
+            demo.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    isWindowShowing = false;
+                    demo.dispose();
+                }
+            });
+        }
     }
 
     private boolean isExpired() {
@@ -177,7 +190,9 @@ public class Start implements ActionListener, MenuListener {
     }
 
     private void checkActivation() {
-        if (general != null && !general.isActivated()) {
+        if (general != null && general.isActivated()) {
+            demo.showActivate(false);
+        } else {
             demo.showActivate(true);
         }
     }

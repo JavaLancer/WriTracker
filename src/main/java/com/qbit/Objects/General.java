@@ -13,7 +13,7 @@ public class General implements Serializable{
 	private String fbUserName;
 	private String twitUserName;
 	private boolean isLaunchStartUp;
-	private boolean isMinimized;
+	private boolean hidePreferencesOnStart;
 	private int ShowCount;  // Values 0 = no show 1= Total Words 2=Session Words
 	private boolean isActivated;
     private Date firstSaveDate;
@@ -57,12 +57,12 @@ public class General implements Serializable{
 	public void setLaunchStartUp(boolean isLaunchStartUp) {
 		this.isLaunchStartUp = isLaunchStartUp;
 	}
-	public boolean isMinimized() {
-		return isMinimized;
+	public boolean isHidePreferencesOnStart() {
+		return hidePreferencesOnStart;
 	}
 
-	public void setMinimized(boolean isMinimized) {
-		this.isMinimized = isMinimized;
+	public void setHidePreferencesOnStart(boolean isMinimized) {
+		this.hidePreferencesOnStart = isMinimized;
 	}
 
 	public int getShowCount() {
