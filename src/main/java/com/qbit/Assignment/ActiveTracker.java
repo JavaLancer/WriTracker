@@ -424,8 +424,26 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,ActionLi
 			break;
 		}
 	}
+
+	private static void setConfigPath() {
+		String write_track_home = System.getenv("WRITE_TRACK_HOME");
+		if (write_track_home == null) {
+			configPath = "C:\\Config";
+		} else {
+			configPath = write_track_home + "\\Config";
+		}
+
+		File configFile = new File(configPath);
+		if (!configFile.exists()) {
+			configFile.mkdir();
+		}
+	}
 	
 	public void updateProjectCount(int size){  //the size matters when came from clipboard
+		if (configPath == null) {
+			setConfigPath();
+		}
+
 		System.out.println("Update Word Count Start"+wordcounts.size());
 		int wordsRemain = 0; // the word remaining before the updates
 		switch (selectedProject) {
