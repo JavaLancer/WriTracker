@@ -427,11 +427,11 @@ public class Start implements ActionListener, MenuListener {
     }
 
     private static void setConfigPath() {
-        String write_track_home = System.getenv("WRITE_TRACK_HOME");
-        if (write_track_home == null) {
+        String wriTrackHome = System.getenv("WRITRACK_HOME");
+        if (wriTrackHome == null) {
             configPath = "C:\\Config";
         } else {
-            configPath = write_track_home + "\\Config";
+            configPath = wriTrackHome + "\\Config";
         }
 
         File configFile = new File(configPath);
