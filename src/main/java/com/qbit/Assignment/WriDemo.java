@@ -317,55 +317,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         panel1.add(txt_tz, c);
         addComboBoxListener(txt_tz);
 
-        JLabel lbl4 = new JLabel("<html><b>Facebook UserName:<html/>");
-        lbl4.setFont(font);
-        c.weightx = 0.0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 3;
-        panel1.add(lbl4, c);
-
-
-        txt_fb = new JTextField();
-        txt_fb.setFont(font);
-        txt_fb.setPreferredSize(new Dimension(150, 25));
-        if (general != null)
-            txt_fb.setText(general.getFbUserName());
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.5;
-        c.gridx = 1;
-        c.gridy = 3;
-        panel1.add(txt_fb, c);
-        txt_fb.setName("Gen_FB");
-        //txt_Name.)
-        txt_fb.addFocusListener(this);
-        addTxtFieldListener(txt_fb);
-
-
-        JLabel lbl5 = new JLabel("<html><b>Twitter UserName:<html/>");
-        lbl5.setFont(font);
-        c.weightx = 0.0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 4;
-        panel1.add(lbl5, c);
-
-
-        txt_twt = new JTextField();
-        txt_twt.setFont(font);
-        txt_twt.setPreferredSize(new Dimension(150, 25));
-        if (general != null)
-            txt_twt.setText(general.getTwitUserName());
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.5;
-        c.gridx = 1;
-        c.gridy = 4;
-        panel1.add(txt_twt, c);
-        txt_twt.setName("Gen_TWT");
-        //txt_Name.)
-        txt_twt.addFocusListener(this);
-        addTxtFieldListener(txt_twt);
-
         JLabel lbl6 = new JLabel("<html><b>WriTracker Launches<br>At Startup:<html/>");
         lbl6.setFont(font);
         c.weightx = 0.0;
@@ -387,7 +338,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         addCheckBoxListener(isLaunched);
 
 
-        JLabel lbl7 = new JLabel("<html><b>Hide preferences<br>on startup:<html/>");
+        JLabel lbl7 = new JLabel("<html><b>Hide Preferences<br>on Startup:<html/>");
         lbl7.setFont(font);
         c.weightx = 0.0;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -561,9 +512,9 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         goWebsite(labelLeft);
         leftPanel.add(Box.createRigidArea(new Dimension(5, 25)));
 
-        JLabel label = new JLabel("About WriteTracker");
+        JLabel label = new JLabel("About WriTracker");
         label.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        label.setToolTipText("www.writetracker.com");
+        label.setToolTipText("www.writracker.com");
         label.setFont(fontBold);
         leftPanel.add(Box.createRigidArea(new Dimension(5, 25)));
         leftPanel.add(label);
@@ -579,13 +530,13 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         label1.setName("Support");
         goWebsite(label1);
 
-        JLabel label2 = new JLabel("WriteTracker.com");
+        JLabel label2 = new JLabel("WriTracker.com");
         label2.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        label2.setToolTipText("www.writetracker.com");
+        label2.setToolTipText("www.writracker.com");
         label2.setFont(fontBold);
         leftPanel.add(Box.createRigidArea(new Dimension(5, 25)));
         leftPanel.add(label2);
-        label2.setName("WriteTracker");
+        label2.setName("WriTracker");
         goWebsite(label2);
 
         JLabel label3 = new JLabel("Contact Us");
@@ -607,7 +558,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         btnFacebook.addActionListener(this);
         btnFacebook.setVisible(true);
 
-        leftPanel.add(Box.createRigidArea(new Dimension(5, 25)));
+        leftPanel.add(Box.createRigidArea(new Dimension(15, 25)));
         leftPanel.add(btnFacebook);
 
 
@@ -915,7 +866,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         panel.add(lbl4, c);
 
 
-        lbl_daysLeft[projID - 1] = new JLabel("<html><b> Days left:</html>");
+        lbl_daysLeft[projID - 1] = new JLabel("<html><b>0 Days Remaining</html>");
         lbl_daysLeft[projID - 1].setFont(font);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 1;
@@ -923,8 +874,14 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridx = 3;
         c.gridy = 1;
         panel.add(lbl_daysLeft[projID - 1], c);
-        if (proj != null)
-            lbl_daysLeft[projID - 1].setText("<html><b>" + TimeUnit.DAYS.convert((proj.getProjectDeadline().getTime() - System.currentTimeMillis()), TimeUnit.MILLISECONDS) + " Days left:</html>");
+        if (proj != null) {
+            long timeRemaining = TimeUnit.DAYS.convert((proj.getProjectDeadline().getTime() - System.currentTimeMillis()), TimeUnit.MILLISECONDS);
+            if (timeRemaining < 14) {
+                lbl_daysLeft[projID - 1].setText("<html><b><font color=\"red\">" + timeRemaining + " Days Remaining!</font></html>");
+            } else {
+                lbl_daysLeft[projID - 1].setText("<html><b>" + timeRemaining + " Days Remaining</html>");
+            }
+        }
 
 
         //Row 3
@@ -974,7 +931,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         //
 
 
-        lbl_totalwords[projID - 1] = new JLabel("<html><b>Current<br>Total Words:</html>");
+        lbl_totalwords[projID - 1] = new JLabel("<html><b>Current Total Words: <font color=\"blue\">0</font></html>");
         lbl_totalwords[projID - 1].setFont(font);
         //c.insets = new Insets(5,5,5,5);
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -982,10 +939,10 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridy = 2;
         panel.add(lbl_totalwords[projID - 1], c);
         if (proj != null)
-            lbl_totalwords[projID - 1].setText("<html><b>Current<br>Total Words:" + proj.getCurrentWords() + "</html>");
+            lbl_totalwords[projID - 1].setText("<html><b>Current Total Words: <font color=\"blue\">" + proj.getCurrentWords() + "</font></html>");
 
 
-        lbl_wordstocomplete[projID - 1] = new JLabel("<html><b>Words <br>Left to Complete:</html>");
+        lbl_wordstocomplete[projID - 1] = new JLabel("<html><b>Words Left to Complete: <font color=\"blue\">0</font></html>");
         lbl_wordstocomplete[projID - 1].setFont(font);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 1;
@@ -994,8 +951,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridy = 2;
         panel.add(lbl_wordstocomplete[projID - 1], c);
         if (proj != null)
-            lbl_wordstocomplete[projID - 1].setText("<html><b>Words <br>Left to Complete: " + (proj.getWordGoal() - proj.getWordsTillDate()) + "</html>");
-        //lbl33.setText("<html><b>Words <br>Left to Complete: "+(proj.getWordGoal() - proj.getCurrentWords()) +"</html>");
+            lbl_wordstocomplete[projID - 1].setText("<html><b>Words Left to Complete: <font color=\"blue\">" + (proj.getWordGoal() - proj.getWordsTillDate()) + "</font></html>");
 
 
         JLabel lbl41 = new JLabel("<html><b>Intervals:</html>");
@@ -1048,7 +1004,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         int MileStoneWordCount = 0;
         if (proj != null)
             MileStoneWordCount = Util.checkMilestoneReward(proj);
-        lbl_milestonecount[projID - 1] = new JLabel("<html><b>Milestone<br>words count: " + MileStoneWordCount + "</html>");
+        lbl_milestonecount[projID - 1] = new JLabel("<html><b>Milestone Word Count: <font color=\"blue\">" + MileStoneWordCount + "</font></html>");
         lbl_milestonecount[projID - 1].setFont(font);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 1;
@@ -1692,7 +1648,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
     public static Project project5;
 
     public static void main(String[] args) {
-        //Get the WriteTracker Home
         setConfigPath();
         System.out.println("ConfigPath" + configPath);
         //get the pref file
@@ -2028,8 +1983,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         General general = new General();
         general.setFullName(txt_Name.getText().trim());
         general.setEmailAddress(txt_email.getText().trim());
-        general.setFbUserName(txt_fb.getText().trim());
-        general.setTwitUserName(txt_twt.getText().trim());
         general.setTimeZone(txt_tz.getSelectedIndex());
         general.setLaunchStartUp(isLaunched.isSelected());
         general.setHidePreferencesOnStart(isMinimized.isSelected());
@@ -2170,24 +2123,37 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
                 lbl_2000[index].setText("<html><b>10 Pages <br>Reward:</html>");
                 lbl_5000[index].setText("<html><b>25 Pages <br>Reward:</html>");
                 lbl_10000[index].setText("<html><b>50 Pages <br>Reward:</html>");
-                lbl_wordstocomplete[index].setText("<html><b>Pages <br>Left to Complete:</html>");
-                lbl_totalwords[index].setText("<html><b>Current<br>Total Pages:</html>");
+                if (proj == null) {
+                    lbl_wordstocomplete[index].setText("<html><b>Pages Left to Complete: 0</html>");
+                    lbl_totalwords[index].setText("<html><b>Current Total Pages: 0</html>");
+                    lbl_milestonecount[index].setText("<html><b>Milestone Page Count: 0</html>");
+                } else {
+                    lbl_wordstocomplete[index].setText("<html><b>Pages Left to Complete: <font color=\"blue\">" + (proj.getWordGoal() - proj.getWordsTillDate()) + "</font></html>");
+                    lbl_totalwords[index].setText("<html><b>Current Total Pages: <font color=\"blue\">" + proj.getCurrentWords() + "</font></html>");
+                    lbl_milestonecount[index].setText("<html><b>Milestone Page Count: <font color=\"blue\">" + Util.checkMilestoneReward(proj) + "</font></html>");
+                }
                 lbl_wordgoal[index].setText("<html><b>Page Goal:</html>");
-                lbl_milestonecount[index].setText("<html><b>Milestone<br>Pages count: ");
                 txt_1000[index].setText("Congratulations! " + Name + " hit 5 pages !");
-                txt_2000[index].setText("Hooray! " + Name + " wrote 10 Pages");
-                txt_5000[index].setText("" + Name + " is soaring! 25 Pages written!");
-                txt_10000[index].setText("" + Name + " is burning through the page count. 50 Pages written today!");
+                txt_2000[index].setText("Hooray! " + Name + " wrote 10 pages!");
+                txt_5000[index].setText("" + Name + " is soaring! 25 pages written!");
+                txt_10000[index].setText("" + Name + " is burning through the page count. 50 pages written today!");
 
             } else {
                 lbl_1000[index].setText("<html><b>1,000 Words <br>Reward:</html>");
                 lbl_2000[index].setText("<html><b>2,000 Words <br>Reward:</html>");
                 lbl_5000[index].setText("<html><b>5,000 Words <br>Reward:</html>");
                 lbl_10000[index].setText("<html><b>10,000 Words <br>Reward:</html>");
-                lbl_wordstocomplete[index].setText("<html><b>Words <br>Left to Complete:</html>");
-                lbl_totalwords[index].setText("<html><b>Current<br>Total Words:</html>");
-                lbl_wordgoal[index].setText("<html><b>Words Goal:</html>");
-                lbl_milestonecount[index].setText("<html><b>Milestone<br>words count: ");
+                if (proj == null) {
+                    lbl_wordstocomplete[index].setText("<html><b>Words Left to Complete: 0</html>");
+                    lbl_totalwords[index].setText("<html><b>Current Total Words: 0</html>");
+                    lbl_milestonecount[index].setText("<html><b>Milestone Word Count: 0</html>");
+                } else {
+                    lbl_wordstocomplete[index].setText("<html><b>Words Left to Complete: <font color=\"blue\">" + (proj.getWordGoal() - proj.getWordsTillDate()) + "</font></html>");
+                    lbl_totalwords[index].setText("<html><b>Current Total Words: <font color=\"blue\">" + proj.getCurrentWords() + "</font></html>");
+                    lbl_milestonecount[index].setText("<html><b>Milestone Word Count: <font color=\"blue\">" + Util.checkMilestoneReward(proj) + "</font></html>");
+
+                }
+                lbl_wordgoal[index].setText("<html><b>Word Goal:</html>");
                 txt_1000[index].setText("Congratulations! " + Name + " hit 1,000 words !");
                 txt_2000[index].setText("Hooray! " + Name + " wrote 2,000 words today");
                 txt_5000[index].setText("" + Name + " is soaring! 5,000 words written!");

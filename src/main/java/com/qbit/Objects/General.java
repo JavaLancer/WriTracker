@@ -39,18 +39,6 @@ public class General implements Serializable{
 	public void setTimeZone(int timeZone) {
 		this.timeZone = timeZone;
 	}
-	public String getFbUserName() {
-		return fbUserName;
-	}
-	public void setFbUserName(String fbUserName) {
-		this.fbUserName = fbUserName;
-	}
-	public String getTwitUserName() {
-		return twitUserName;
-	}
-	public void setTwitUserName(String twitUserName) {
-		this.twitUserName = twitUserName;
-	}
 	public boolean isLaunchStartUp() {
 		return isLaunchStartUp;
 	}
