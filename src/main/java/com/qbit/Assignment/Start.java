@@ -15,6 +15,7 @@ import java.io.ObjectInputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Timer;
+import java.util.concurrent.TimeUnit;
 
 /*
  * This is the first class which is called.
@@ -75,6 +76,7 @@ public class Start implements ActionListener, MenuListener {
                 System.exit(0);
             }
         }
+
 
         checkActivation();
         popup = new JPopupMenu();
@@ -193,8 +195,19 @@ public class Start implements ActionListener, MenuListener {
         if (general != null && general.isActivated()) {
             demo.showActivate(false);
         } else {
+            if (general != null) {
+                Calendar expirationDate = Calendar.getInstance();
+                expirationDate.setTime(general.getFirstSaveDate());
+                expirationDate.add(Calendar.WEEK_OF_YEAR, 4);
+                JOptionPane.showMessageDialog(null, "You have " + getDateDiff(Calendar.getInstance().getTime(), expirationDate.getTime(), TimeUnit.DAYS) + " days in your free trial.", "WriTracker Trial", JOptionPane.WARNING_MESSAGE);
+            }
             demo.showActivate(true);
         }
+    }
+
+    private long getDateDiff(Date date1, Date date2, TimeUnit timeUnit) {
+        long diffInMillies = date2.getTime() - date1.getTime();
+        return timeUnit.convert(diffInMillies,TimeUnit.MILLISECONDS);
     }
 
     @Override
