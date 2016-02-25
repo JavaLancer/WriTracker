@@ -6,7 +6,7 @@
 
     <groupId>WriTracker</groupId>
     <artifactId>WriTrackerBeta</artifactId>
-    <version>1.5</version>
+    <version>1.0</version>
     <build>
         <defaultGoal>install</defaultGoal>
         <plugins>

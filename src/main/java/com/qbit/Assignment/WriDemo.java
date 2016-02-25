@@ -638,7 +638,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
     JTextField txt_Milestone_penalty;
     JTextField txt_5000[] = new JTextField[5];
     JTextField txt_10000[] = new JTextField[5];
-    JTextField txt_completion;
+    JTextField txt_completion[] = new JTextField[5];
     JDatePickerImpl datePicker;
 
 
@@ -663,18 +663,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
 
     public JPanel getProject(int projID) {
         //Get the name of the writer from general
-        String Name = "[NAME]";
-        ObjectInputStream ois;
-        try {
-            FileInputStream fin = new FileInputStream(configPath + "\\general.ser");
-            ois = new ObjectInputStream(fin);
-            general = (General) ois.readObject();
-            Name = general.getFullName();
-        } catch (Exception e) {
-            //e.printStackTrace();
-            Name = "[NAME]";
-        }
-        //
+        String Name = getNameFromGeneral();
         Project proj = null;
         if (projID == 1 && project1 != null)
             proj = project1;
@@ -1356,38 +1345,38 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridy = 9;
         panel.add(lbl101, c);
 
-        txt_completion = new JTextField();
-        txt_completion.setFont(font);
+        txt_completion[projID - 1] = new JTextField();
+        txt_completion[projID - 1].setFont(font);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 1;
         c.weighty = 2;
         c.gridx = 1;
         c.gridy = 9;
-        panel.add(txt_completion, c);
-        txt_completion.setName("Proj_Comp_rew");
+        panel.add(txt_completion[projID - 1], c);
+        txt_completion[projID - 1].setName("Proj_Comp_rew");
         if (proj != null) {
-            txt_completion.setText(proj.getRewardCompletion());
+            txt_completion[projID - 1].setText(proj.getRewardCompletion());
         }
         else {
-            txt_completion.setText("Take [PROJECT] and start editing! Well done!");
+            txt_completion[projID - 1].setText("Take " + txt_ProjName[projID - 1].getText() + " and start editing! Well done!");
         }
-        addTxtFieldListener(txt_completion);
+        addTxtFieldListener(txt_completion[projID - 1]);
         //
         switch (projID) {
             case 1:
-                proj1Lists.add(txt_completion);
+                proj1Lists.add(txt_completion[projID - 1]);
                 break;
             case 2:
-                proj2Lists.add(txt_completion);
+                proj2Lists.add(txt_completion[projID - 1]);
                 break;
             case 3:
-                proj3Lists.add(txt_completion);
+                proj3Lists.add(txt_completion[projID - 1]);
                 break;
             case 4:
-                proj4Lists.add(txt_completion);
+                proj4Lists.add(txt_completion[projID - 1]);
                 break;
             case 5:
-                proj5Lists.add(txt_completion);
+                proj5Lists.add(txt_completion[projID - 1]);
                 break;
 
             default:
@@ -1459,9 +1448,23 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             default:
                 break;
         }
-        //
-        //EnableProjectFields(projID==1?proj1Lists:projID==2?proj2Lists:proj3Lists, false);
+
+        refreshFields(txt_Name.getText().trim(), (String) cmb_ProjType.getSelectedItem(), projID);
         return panel;
+    }
+
+    private String getNameFromGeneral() {
+        String Name;
+        ObjectInputStream ois;
+        try {
+            FileInputStream fin = new FileInputStream(configPath + "\\general.ser");
+            ois = new ObjectInputStream(fin);
+            general = (General) ois.readObject();
+            Name = general.getFullName();
+        } catch (Exception e) {
+            Name = "[NAME]";
+        }
+        return Name;
     }
 
     private void addTxtFieldListener(JTextField txtField) {
@@ -1951,23 +1954,28 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
                 btn.setVisible(false);
             }
         }
+
+        txt_completion[id - 1].setText("Take " + txt_ProjName[id - 1].getText() + " and start editing! Well done!");
+
+        switch (id) {
+            case 1:
+                project1 = proj;
+                break;
+            case 2:
+                project2 = proj;
+                break;
+            case 3:
+                project3 = proj;
+                break;
+            case 4:
+                project4 = proj;
+                break;
+            case 5:
+                project5 = proj;
+                break;
+            default:
+        }
     }
-
-//    public void EnableProjectFields(ArrayList<Object> lists, boolean isEnabled) {
-//        ((JTextField) lists.get(0)).setEditable(isEnabled);
-//        ((JComboBox) lists.get(2)).setEditable(isEnabled);
-//        ((JTextField) lists.get(3)).setEditable(isEnabled);
-//        ((JComboBox) lists.get(4)).setEditable(isEnabled);
-//        ((JCheckBox) lists.get(5)).setEnabled(isEnabled);
-//        ((JTextField) lists.get(6)).setEnabled(isEnabled);
-//        ((JTextField) lists.get(7)).setEnabled(isEnabled);
-//        ((JTextField) lists.get(8)).setEnabled(isEnabled);
-//        ((JTextField) lists.get(9)).setEnabled(isEnabled);
-//        ((JTextField) lists.get(10)).setEnabled(isEnabled);
-//        ((JTextField) lists.get(11)).setEnabled(isEnabled);
-//        ((JTextField) lists.get(12)).setEnabled(isEnabled);
-//    }
-
 
     public void SaveGeneralTab() {
         String validate = validatePrefernece();
@@ -1978,8 +1986,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
 
         btnGeneralSave.setVisible(false);
 
-        //adding dialog box to asking for save
-
         General general = new General();
         general.setFullName(txt_Name.getText().trim());
         general.setEmailAddress(txt_email.getText().trim());
@@ -1988,8 +1994,10 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         general.setHidePreferencesOnStart(isMinimized.isSelected());
         if (Start.general == null || Start.general.getFirstSaveDate() == null) {
             general.setFirstSaveDate(new Date());
+            general.setActivated(false);
         } else {
             general.setFirstSaveDate(Start.general.getFirstSaveDate());
+            general.setActivated(Start.general.isActivated());
         }
 
         int showCount = 0;
@@ -2001,19 +2009,16 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         }
         general.setShowCount(showCount);
 
+        refreshFields(general.getFullName(), project1 == null ? "notScript" : (project1.getProjectType() == 6 ? "SCRIPT" : "notScript"), 1);
+        refreshFields(general.getFullName(), project2 == null ? "notScript" : (project2.getProjectType() == 6 ? "SCRIPT" : "notScript"), 2);
+        refreshFields(general.getFullName(), project3 == null ? "notScript" : (project3.getProjectType() == 6 ? "SCRIPT" : "notScript"), 3);
+        if (general.isActivated()) {
+            refreshFields(general.getFullName(), project4 == null ? "notScript" : (project4.getProjectType() == 6 ? "SCRIPT" : "notScript"), 4);
+            refreshFields(general.getFullName(), project5 == null ? "notScript" : (project5.getProjectType() == 6 ? "SCRIPT" : "notScript"), 5);
+        }
+
         saveGeneral(configPath, general);
         JOptionPane.showMessageDialog(this, "Preferences successfully saved.", "Save Preferences", JOptionPane.INFORMATION_MESSAGE);
-
-//        txt_Name.setEnabled(false);
-//        txt_email.setEnabled(false);
-//        txt_fb.setEnabled(false);
-//        txt_twt.setEnabled(false);
-//        txt_tz.setEnabled(false);
-//        isLaunched.setEnabled(false);
-//        isMinimized.setEnabled(false);
-//        isShowCount.setEnabled(false);
-//        radio_total.setEnabled(false);
-//        radio_session.setEnabled(false);
     }
 
     @Override
@@ -2076,93 +2081,77 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         }
 
         if (event.getStateChange() == ItemEvent.SELECTED) {
-            //
-            String Name = "[NAME]";
-            ObjectInputStream ois;
-            try {
-                FileInputStream fin = new FileInputStream(configPath + "\\general.ser");
-                ois = new ObjectInputStream(fin);
-                general = (General) ois.readObject();
-                Name = general.getFullName();
-            } catch (Exception e) {
-                //e.printStackTrace();
-                Name = "[NAME]";
-            }
-            //
-            int index = tabbedPane.getSelectedIndex();
-            //System.out.println("Selected Index:"+index);
             Object item = event.getItem();
+            String selectedItem = item.toString();
 
-            // do something with object
-            // System.out.println("Selected "+item.toString());
-            Project proj = null;
-            switch (index) {
-                case 1:
-                    proj = project1;
-                    break;
-                case 2:
-                    proj = project2;
-                    break;
-                case 3:
-                    proj = project3;
-                    break;
-                case 4:
-                    proj = project4;
-                    break;
-                case 5:
-                    proj = project5;
-                    break;
-                default:
-                    break;
-            }
-            --index;
-            System.out.println("proj" + proj);
-            // if(proj==null){
-            if (item.toString().equalsIgnoreCase("SCRIPT")) {
-                lbl_1000[index].setText("<html><b>5 Pages <br>Reward:</html>");
-                lbl_2000[index].setText("<html><b>10 Pages <br>Reward:</html>");
-                lbl_5000[index].setText("<html><b>25 Pages <br>Reward:</html>");
-                lbl_10000[index].setText("<html><b>50 Pages <br>Reward:</html>");
-                if (proj == null) {
-                    lbl_wordstocomplete[index].setText("<html><b>Pages Left to Complete: 0</html>");
-                    lbl_totalwords[index].setText("<html><b>Current Total Pages: 0</html>");
-                    lbl_milestonecount[index].setText("<html><b>Milestone Page Count: 0</html>");
-                } else {
-                    lbl_wordstocomplete[index].setText("<html><b>Pages Left to Complete: <font color=\"blue\">" + (proj.getWordGoal() - proj.getWordsTillDate()) + "</font></html>");
-                    lbl_totalwords[index].setText("<html><b>Current Total Pages: <font color=\"blue\">" + proj.getCurrentWords() + "</font></html>");
-                    lbl_milestonecount[index].setText("<html><b>Milestone Page Count: <font color=\"blue\">" + Util.checkMilestoneReward(proj) + "</font></html>");
-                }
-                lbl_wordgoal[index].setText("<html><b>Page Goal:</html>");
-                txt_1000[index].setText("Congratulations! " + Name + " hit 5 pages !");
-                txt_2000[index].setText("Hooray! " + Name + " wrote 10 pages!");
-                txt_5000[index].setText("" + Name + " is soaring! 25 pages written!");
-                txt_10000[index].setText("" + Name + " is burning through the page count. 50 pages written today!");
-
-            } else {
-                lbl_1000[index].setText("<html><b>1,000 Words <br>Reward:</html>");
-                lbl_2000[index].setText("<html><b>2,000 Words <br>Reward:</html>");
-                lbl_5000[index].setText("<html><b>5,000 Words <br>Reward:</html>");
-                lbl_10000[index].setText("<html><b>10,000 Words <br>Reward:</html>");
-                if (proj == null) {
-                    lbl_wordstocomplete[index].setText("<html><b>Words Left to Complete: 0</html>");
-                    lbl_totalwords[index].setText("<html><b>Current Total Words: 0</html>");
-                    lbl_milestonecount[index].setText("<html><b>Milestone Word Count: 0</html>");
-                } else {
-                    lbl_wordstocomplete[index].setText("<html><b>Words Left to Complete: <font color=\"blue\">" + (proj.getWordGoal() - proj.getWordsTillDate()) + "</font></html>");
-                    lbl_totalwords[index].setText("<html><b>Current Total Words: <font color=\"blue\">" + proj.getCurrentWords() + "</font></html>");
-                    lbl_milestonecount[index].setText("<html><b>Milestone Word Count: <font color=\"blue\">" + Util.checkMilestoneReward(proj) + "</font></html>");
-
-                }
-                lbl_wordgoal[index].setText("<html><b>Word Goal:</html>");
-                txt_1000[index].setText("Congratulations! " + Name + " hit 1,000 words !");
-                txt_2000[index].setText("Hooray! " + Name + " wrote 2,000 words today");
-                txt_5000[index].setText("" + Name + " is soaring! 5,000 words written!");
-                txt_10000[index].setText("" + Name + " is burning through the word count. 10,000 words written today!");
-
-            }
-            // }
+            refreshFields(getNameFromGeneral(), selectedItem, tabbedPane.getSelectedIndex());
         }
     }
 
+    private void refreshFields(String name, String selectedItem, int index) {
+        Project proj = null;
+        switch (index) {
+            case 1:
+                proj = project1;
+                break;
+            case 2:
+                proj = project2;
+                break;
+            case 3:
+                proj = project3;
+                break;
+            case 4:
+                proj = project4;
+                break;
+            case 5:
+                proj = project5;
+                break;
+            default:
+                break;
+        }
+        --index;
 
+        if (selectedItem.equalsIgnoreCase("SCRIPT")) {
+            lbl_1000[index].setText("<html><b>5 Pages <br>Reward:</html>");
+            lbl_2000[index].setText("<html><b>10 Pages <br>Reward:</html>");
+            lbl_5000[index].setText("<html><b>25 Pages <br>Reward:</html>");
+            lbl_10000[index].setText("<html><b>50 Pages <br>Reward:</html>");
+            if (proj == null) {
+                lbl_wordstocomplete[index].setText("<html><b>Pages Left to Complete: 0</html>");
+                lbl_totalwords[index].setText("<html><b>Current Total Pages: 0</html>");
+                lbl_milestonecount[index].setText("<html><b>Milestone Page Count: 0</html>");
+            } else {
+                lbl_wordstocomplete[index].setText("<html><b>Pages Left to Complete: <font color=\"blue\">" + (proj.getWordGoal() - proj.getWordsTillDate()) + "</font></html>");
+                lbl_totalwords[index].setText("<html><b>Current Total Pages: <font color=\"blue\">" + proj.getCurrentWords() + "</font></html>");
+                lbl_milestonecount[index].setText("<html><b>Milestone Page Count: <font color=\"blue\">" + Util.checkMilestoneReward(proj) + "</font></html>");
+            }
+            lbl_wordgoal[index].setText("<html><b>Page Goal:</html>");
+            txt_1000[index].setText("Congratulations! " + name + " hit 5 pages !");
+            txt_2000[index].setText("Hooray! " + name + " wrote 10 pages!");
+            txt_5000[index].setText("" + name + " is soaring! 25 pages written!");
+            txt_10000[index].setText("" + name + " is burning through the page count. 50 pages written today!");
+        } else {
+            lbl_1000[index].setText("<html><b>1,000 Words <br>Reward:</html>");
+            lbl_2000[index].setText("<html><b>2,000 Words <br>Reward:</html>");
+            lbl_5000[index].setText("<html><b>5,000 Words <br>Reward:</html>");
+            lbl_10000[index].setText("<html><b>10,000 Words <br>Reward:</html>");
+            if (proj == null) {
+                lbl_wordstocomplete[index].setText("<html><b>Words Left to Complete: 0</html>");
+                lbl_totalwords[index].setText("<html><b>Current Total Words: 0</html>");
+                lbl_milestonecount[index].setText("<html><b>Milestone Word Count: 0</html>");
+            } else {
+                lbl_wordstocomplete[index].setText("<html><b>Words Left to Complete: <font color=\"blue\">" + (proj.getWordGoal() - proj.getWordsTillDate()) + "</font></html>");
+                lbl_totalwords[index].setText("<html><b>Current Total Words: <font color=\"blue\">" + proj.getCurrentWords() + "</font></html>");
+                lbl_milestonecount[index].setText("<html><b>Milestone Word Count: <font color=\"blue\">" + Util.checkMilestoneReward(proj) + "</font></html>");
+
+            }
+            lbl_wordgoal[index].setText("<html><b>Word Goal:</html>");
+            txt_1000[index].setText("Congratulations! " + name + " hit 1,000 words !");
+            txt_2000[index].setText("Hooray! " + name + " wrote 2,000 words today");
+            txt_5000[index].setText("" + name + " is soaring! 5,000 words written!");
+            txt_10000[index].setText("" + name + " is burning through the word count. 10,000 words written today!");
+        }
+
+        txt_completion[index].setText("Take " + txt_ProjName[index].getText() + " and start editing! Well done!");
+    }
 }
