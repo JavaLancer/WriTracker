@@ -209,14 +209,8 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             e.printStackTrace();
         }
 
-
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BorderLayout());
-
-        //
-
-        //
-
 
         tabbedPane = new JTabbedPane();
         tabbedPane.setUI(new MyTabbedPaneUI(tabbedPane));
@@ -228,7 +222,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         panel1.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
-
         JLabel lbl1 = new JLabel("<html><b>Full Name:</html>");
         lbl1.setFont(font);
         //lbl1.setFont(new Font("Arial", Font.BOLD, 15));
@@ -237,7 +230,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridx = 0;
         c.gridy = 0;
         panel1.add(lbl1, c);
-
 
         txt_Name = new JTextField();
         txt_Name.setFont(font);
@@ -262,7 +254,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridy = 0;
         panel1.add(lbl_bl, c);
 
-
         JLabel lbl2 = new JLabel("<html><b>Email Address:<html/>");
         lbl2.setFont(font);
         c.weightx = 0.0;
@@ -270,7 +261,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridx = 0;
         c.gridy = 1;
         panel1.add(lbl2, c);
-
 
         txt_email = new JTextField();
         txt_email.setFont(font);
@@ -287,7 +277,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         txt_email.addFocusListener(this);
         addTxtFieldListener(txt_email);
 
-
         JLabel lbl3 = new JLabel("<html><b>Time Zone:<html/>");
         lbl3.setFont(font);
         c.weightx = 0.0;
@@ -295,7 +284,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridx = 0;
         c.gridy = 2;
         panel1.add(lbl3, c);
-
 
         txt_tz = new JComboBox(names);
         txt_tz.setFont(font);
@@ -337,7 +325,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         panel1.add(isLaunched, c);
         addCheckBoxListener(isLaunched);
 
-
         JLabel lbl7 = new JLabel("<html><b>Hide Preferences<br>on Startup:<html/>");
         lbl7.setFont(font);
         c.weightx = 0.0;
@@ -345,7 +332,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridx = 0;
         c.gridy = 6;
         panel1.add(lbl7, c);
-
 
         isMinimized = new JCheckBox("");
         isMinimized.setOpaque(false);
@@ -369,7 +355,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         panel1.add(lbl8, c);
 
         RoundedPanel panWord = new RoundedPanel();
-        //panWord.setBackground(bgColor);
         FlowLayout lay = new FlowLayout();
         lay.setAlignment(FlowLayout.LEFT);
         panWord.setLayout(lay);
@@ -391,17 +376,13 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         radio_total = new JRadioButton("Show Total Words");
         radio_total.setFont(font);
         radio_total.setOpaque(false);
-        //radio_total.setBackground(bgColor);
         panWord.add(radio_total);
         radio_total.setVisible(isShow);
         addRadioButtonListener(radio_total);
-        //if(isShowCount.isSelected())
-        //radio_total.setSelected(true);
 
         radio_session = new JRadioButton("Show Session Totals");
         radio_session.setFont(font);
         radio_session.setOpaque(false);
-        //radio_session.setBackground(bgColor);
         panWord.add(radio_session);
         radio_session.setVisible(isShow);
         addRadioButtonListener(radio_session);
@@ -413,14 +394,11 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         if (general != null && general.getShowCount() != 0) // check showcount values
             isShowCount.setSelected(true);
 
-
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 0.0;
         c.gridx = 1;
         c.gridy = 7;
         panel1.add(panWord, c);
-        // End of new REqu.
-
 
         lblStatus = new JLabel("");
         c.weightx = 0.0;
@@ -428,7 +406,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridx = 1;
         c.gridy = 8;
         panel1.add(lblStatus, c);
-
 
         JPanel pnlBottom = new JPanel();
         pnlBottom.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -448,17 +425,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             pnlBottom.add(btn_Activate);
         }
 
-        //pnlBottom.setBackground(bgColor);
-
-        //c.fill = GridBagConstraints.HORIZONTAL;
-        //c.ipady = 0;       //reset to default
-        //c.weighty = 1.0;   //request any extra vertical space
-        //c.anchor = GridBagConstraints.PAGE_START; //bottom of space
-        //c.insets = new Insets(10,0,0,0);  //top padding
-        //c.gridx = 1;       //aligned with button 2
-        //c.gridwidth = 2;   //2 columns wide
-        //c.gridy = 8;       //third row
-
         c.weightx = 0.0;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
@@ -466,25 +432,19 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         pnlBottom.setOpaque(false);
         panel1.add(pnlBottom, c);
 
-        //.setBackground(bgColor);
         tabbedPane.addTab("General", panel1);
-        //pnl_Proj1 = getProject(1);
         if (project1 != null)
             tabbedPane.addTab(project1.getProjectTitle(), getProject(1));
         else
             tabbedPane.addTab("Project 1", getProject(1));
-        //pnl_Proj2 = getProject(2);
         if (project2 != null)
             tabbedPane.addTab(project2.getProjectTitle(), getProject(2));
         else
             tabbedPane.addTab("Project 2", getProject(2));
-        //pnl_Proj3 = getProject(3);
         if (project3 != null)
             tabbedPane.addTab(project3.getProjectTitle(), getProject(3));
         else
             tabbedPane.addTab("Project 3", getProject(3));
-        //for porject 4 and 5
-        //we will add a condition here for license version
         if (general != null && general.isActivated()) {
             if (project4 != null) {
                 tabbedPane.addTab(project4.getProjectTitle(), getProject(4));
@@ -502,7 +462,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         topPanel.add(tabbedPane, BorderLayout.CENTER);
         setSize(1300, 600);
         setLocationRelativeTo(null);
-        //
+
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.PAGE_AXIS));
         ImageIcon image = new ImageIcon(getClass().getResource("/images/Logo.png"));
@@ -548,7 +508,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         label3.setName("Support");
         goWebsite(label3);
 
-
         StandardButton btnFacebook = new StandardButton("Connect To Facebook");
         btnFacebook.setBackground(Color.gray);
         btnFacebook.setFont(font);
@@ -560,7 +519,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
 
         leftPanel.add(Box.createRigidArea(new Dimension(15, 25)));
         leftPanel.add(btnFacebook);
-
 
         StandardButton btnTwitter = new StandardButton("  Connect To Twitter   ");
         btnTwitter.setBackground(Color.gray);
@@ -574,53 +532,40 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         leftPanel.add(Box.createRigidArea(new Dimension(5, 25)));
         leftPanel.add(btnTwitter);
 
-        //design the left panel
-
-        //
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                leftPanel, topPanel);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, topPanel);
         splitPane.setOneTouchExpandable(false);
         splitPane.setDividerLocation(228);
-
-        //Provide minimum sizes for the two components in the split pane
         Dimension minimumSize = new Dimension(228, 50);
         leftPanel.setMinimumSize(minimumSize);
         topPanel.setMinimumSize(minimumSize);
-        //
-        //setContentPane(topPanel);
         setContentPane(splitPane);
-        //  setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
-
     }
 
 
     private void goWebsite(JLabel website) {
         website.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                try {
-                    Desktop desktop = Desktop.getDesktop();
-                    if (e.getComponent().getName().equalsIgnoreCase("Support")) {
-                        String mailTo = "admin@evicuna.com";
-                        URI uriMailTo = null;
-                        try {
-                            if (mailTo.length() > 0) {
-                                uriMailTo = new URI("mailto", mailTo, null);
-                                desktop.mail(uriMailTo);
-                            } else {
-                                desktop.mail();
-                            }
-                        } catch (IOException ioe) {
-                            ioe.printStackTrace();
-                        } catch (URISyntaxException use) {
-                            use.printStackTrace();
+            public void mouseClicked(MouseEvent mouseEvent) {
+                Desktop desktop = Desktop.getDesktop();
+                if (mouseEvent.getComponent().getName().equalsIgnoreCase("Support")) {
+                    String mailTo = "admin@evicuna.com";
+                    URI uriMailTo;
+                    try {
+                        if (mailTo.length() > 0) {
+                            uriMailTo = new URI("mailto", mailTo, null);
+                            desktop.mail(uriMailTo);
+                        } else {
+                            desktop.mail();
                         }
-                    } else {
-                        desktop.browse(new URI("http://www.writracker.com"));
+                    } catch (IOException | URISyntaxException e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception ex) {
-                    //It looks like there's a problem
+                } else {
+                    try {
+                        desktop.browse(new URI("http://www.writracker.com"));
+                    } catch (IOException | URISyntaxException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -633,9 +578,9 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
     JComboBox cmb_intervals;
     JCheckBox isPost;
     JTextField txt_1000[] = new JTextField[5];
-    JTextField txt_Milestone_reward;
+    JTextField txt_Milestone_reward[] = new JTextField[5];
     JTextField txt_2000[] = new JTextField[5];
-    JTextField txt_Milestone_penalty;
+    JTextField txt_Milestone_penalty[] = new JTextField[5];
     JTextField txt_5000[] = new JTextField[5];
     JTextField txt_10000[] = new JTextField[5];
     JTextField txt_completion[] = new JTextField[5];
@@ -1106,38 +1051,38 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridy = 5;
         panel.add(lbl62, c);
 
-        txt_Milestone_reward = new JTextField();
-        txt_Milestone_reward.setFont(font);
+        txt_Milestone_reward[projID - 1] = new JTextField();
+        txt_Milestone_reward[projID - 1].setFont(font);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 1;
         c.weighty = 2;
         c.gridx = 3;
         c.gridy = 5;
-        panel.add(txt_Milestone_reward, c);
-        txt_Milestone_reward.setName("Proj_Mile_rew");
+        panel.add(txt_Milestone_reward[projID - 1], c);
+        txt_Milestone_reward[projID - 1].setName("Proj_Mile_rew");
         if (proj != null) {
-            txt_Milestone_reward.setText(proj.getRewardMilestone());
+            txt_Milestone_reward[projID - 1].setText(proj.getRewardMilestone());
         }
         else {
-            txt_Milestone_reward.setText(Name + " made a milestone writing goal! Kudos are appreciated!");
+            txt_Milestone_reward[projID - 1].setText(Name + " made a milestone writing goal! Kudos are appreciated!");
         }
-        addTxtFieldListener(txt_Milestone_reward);
+        addTxtFieldListener(txt_Milestone_reward[projID - 1]);
         //
         switch (projID) {
             case 1:
-                proj1Lists.add(txt_Milestone_reward);
+                proj1Lists.add(txt_Milestone_reward[projID - 1]);
                 break;
             case 2:
-                proj2Lists.add(txt_Milestone_reward);
+                proj2Lists.add(txt_Milestone_reward[projID - 1]);
                 break;
             case 3:
-                proj3Lists.add(txt_Milestone_reward);
+                proj3Lists.add(txt_Milestone_reward[projID - 1]);
                 break;
             case 4:
-                proj4Lists.add(txt_Milestone_reward);
+                proj4Lists.add(txt_Milestone_reward[projID - 1]);
                 break;
             case 5:
-                proj5Lists.add(txt_Milestone_reward);
+                proj5Lists.add(txt_Milestone_reward[projID - 1]);
                 break;
 
             default:
@@ -1202,38 +1147,38 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         c.gridy = 6;
         panel.add(lbl72, c);
 
-        txt_Milestone_penalty = new JTextField();
-        txt_Milestone_penalty.setFont(font);
+        txt_Milestone_penalty[projID - 1] = new JTextField();
+        txt_Milestone_penalty[projID - 1].setFont(font);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 1;
         c.weighty = 2;
         c.gridx = 3;
         c.gridy = 6;
-        panel.add(txt_Milestone_penalty, c);
-        txt_Milestone_penalty.setName("Proj_Mil_Pen");
+        panel.add(txt_Milestone_penalty[projID - 1], c);
+        txt_Milestone_penalty[projID - 1].setName("Proj_Mil_Pen");
         if (proj != null) {
-            txt_Milestone_penalty.setText(proj.getPenalty());
+            txt_Milestone_penalty[projID - 1].setText(proj.getPenalty());
         }
         else {
-            txt_Milestone_penalty.setText(Name + " missed a milestone writing goal! Encouragement is needed!");
+            txt_Milestone_penalty[projID - 1].setText(Name + " missed a milestone writing goal! Encouragement is needed!");
         }
-        addTxtFieldListener(txt_Milestone_penalty);
+        addTxtFieldListener(txt_Milestone_penalty[projID - 1]);
         //
         switch (projID) {
             case 1:
-                proj1Lists.add(txt_Milestone_penalty);
+                proj1Lists.add(txt_Milestone_penalty[projID - 1]);
                 break;
             case 2:
-                proj2Lists.add(txt_Milestone_penalty);
+                proj2Lists.add(txt_Milestone_penalty[projID - 1]);
                 break;
             case 3:
-                proj3Lists.add(txt_Milestone_penalty);
+                proj3Lists.add(txt_Milestone_penalty[projID - 1]);
                 break;
             case 4:
-                proj4Lists.add(txt_Milestone_penalty);
+                proj4Lists.add(txt_Milestone_penalty[projID - 1]);
                 break;
             case 5:
-                proj5Lists.add(txt_Milestone_penalty);
+                proj5Lists.add(txt_Milestone_penalty[projID - 1]);
                 break;
 
             default:
@@ -1309,31 +1254,29 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             txt_10000[projID - 1].setText(proj.getReward10000());
         }
         else {
-            txt_10000[projID - 1].setText(Name + " is burning through the word count. 10,000 words written today!");
+            txt_10000[projID - 1].setText(Name + " is cruising. 10,000 words written today!");
         }
         addTxtFieldListener(txt_10000[projID - 1]);
-        //
+
         switch (projID) {
             case 1:
-                proj1Lists.add(txt_1000[projID - 1]);
+                proj1Lists.add(txt_10000[projID - 1]);
                 break;
             case 2:
-                proj2Lists.add(txt_1000[projID - 1]);
+                proj2Lists.add(txt_10000[projID - 1]);
                 break;
             case 3:
-                proj3Lists.add(txt_1000[projID - 1]);
+                proj3Lists.add(txt_10000[projID - 1]);
                 break;
             case 4:
-                proj4Lists.add(txt_1000[projID - 1]);
+                proj4Lists.add(txt_10000[projID - 1]);
                 break;
             case 5:
-                proj5Lists.add(txt_1000[projID - 1]);
+                proj5Lists.add(txt_10000[projID - 1]);
                 break;
-
             default:
                 break;
         }
-        //
 
 
         JLabel lbl101 = new JLabel("<html><b>Completion <br>Reward:</html>");
@@ -1896,7 +1839,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
 
         Project proj = new Project();
         String projTitle = ((JTextField) lists.get(0)).getText().trim();
-        if (projTitle == null || projTitle.equals("")) {
+        if (projTitle.equals("")) {
             JOptionPane.showMessageDialog(this, "Please enter Project Title", "Input Validation Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -1908,7 +1851,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             JOptionPane.showMessageDialog(this, "Project Deadline is not a valid date", "Project deadline Validation Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        //System.out.println("Date "+(Date) mydatePicker.getModel().getValue());
         proj.setProjectDeadline(deadDate);
         int wordGoal = 0;
         try {
@@ -1927,6 +1869,35 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         proj.setReward5000(((JTextField) lists.get(10)).getText().trim());
         proj.setReward10000(((JTextField) lists.get(11)).getText().trim());
         proj.setRewardCompletion(((JTextField) lists.get(12)).getText().trim());
+
+        Project old = new Project();
+        switch (id) {
+            case 1:
+                old = project1;
+                project1 = proj;
+                break;
+            case 2:
+                old = project2;
+                project2 = proj;
+                break;
+            case 3:
+                old = project3;
+                project3 = proj;
+                break;
+            case 4:
+                old = project4;
+                project4 = proj;
+                break;
+            case 5:
+                old = project5;
+                project5 = proj;
+                break;
+            default:
+        }
+
+        if (old != null) {
+            txt_completion[id - 1].setText(txt_completion[id - 1].getText().replace(old.getProjectTitle(), txt_ProjName[id - 1].getText()));
+        }
 
         try {
             FileOutputStream fout = new FileOutputStream(configPath + "\\project" + id + ".ser");
@@ -1955,26 +1926,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             }
         }
 
-        txt_completion[id - 1].setText("Take " + txt_ProjName[id - 1].getText() + " and start editing! Well done!");
-
-        switch (id) {
-            case 1:
-                project1 = proj;
-                break;
-            case 2:
-                project2 = proj;
-                break;
-            case 3:
-                project3 = proj;
-                break;
-            case 4:
-                project4 = proj;
-                break;
-            case 5:
-                project5 = proj;
-                break;
-            default:
-        }
     }
 
     public void SaveGeneralTab() {
@@ -1983,8 +1934,6 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             JOptionPane.showMessageDialog(this, validate, "Input Validation Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
-        btnGeneralSave.setVisible(false);
 
         General general = new General();
         general.setFullName(txt_Name.getText().trim());
@@ -2002,10 +1951,12 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
 
         int showCount = 0;
         if (isShowCount.isSelected()) {
-            if (radio_total.isSelected())
+            if (radio_total.isSelected()) {
                 showCount = 1;
-            else
+            }
+            else {
                 showCount = 2;
+            }
         }
         general.setShowCount(showCount);
 
@@ -2019,6 +1970,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
 
         saveGeneral(configPath, general);
         JOptionPane.showMessageDialog(this, "Preferences successfully saved.", "Save Preferences", JOptionPane.INFORMATION_MESSAGE);
+        btnGeneralSave.setVisible(false);
     }
 
     @Override
@@ -2111,34 +2063,35 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         }
         --index;
 
+        String oldName = getNameFromGeneral();
         if (selectedItem.equalsIgnoreCase("SCRIPT")) {
             lbl_1000[index].setText("<html><b>5 Pages <br>Reward:</html>");
             lbl_2000[index].setText("<html><b>10 Pages <br>Reward:</html>");
             lbl_5000[index].setText("<html><b>25 Pages <br>Reward:</html>");
             lbl_10000[index].setText("<html><b>50 Pages <br>Reward:</html>");
             if (proj == null) {
-                lbl_wordstocomplete[index].setText("<html><b>Pages Left to Complete: 0</html>");
-                lbl_totalwords[index].setText("<html><b>Current Total Pages: 0</html>");
-                lbl_milestonecount[index].setText("<html><b>Milestone Page Count: 0</html>");
+                lbl_wordstocomplete[index].setText("<html><b>Pages Left to Complete:  <font color=\"blue\">0</font></html>");
+                lbl_totalwords[index].setText("<html><b>Current Total Pages:  <font color=\"blue\">0</font></html>");
+                lbl_milestonecount[index].setText("<html><b>Milestone Page Count:  <font color=\"blue\">0</font></html>");
             } else {
                 lbl_wordstocomplete[index].setText("<html><b>Pages Left to Complete: <font color=\"blue\">" + (proj.getWordGoal() - proj.getWordsTillDate()) + "</font></html>");
                 lbl_totalwords[index].setText("<html><b>Current Total Pages: <font color=\"blue\">" + proj.getCurrentWords() + "</font></html>");
                 lbl_milestonecount[index].setText("<html><b>Milestone Page Count: <font color=\"blue\">" + Util.checkMilestoneReward(proj) + "</font></html>");
             }
             lbl_wordgoal[index].setText("<html><b>Page Goal:</html>");
-            txt_1000[index].setText("Congratulations! " + name + " hit 5 pages !");
-            txt_2000[index].setText("Hooray! " + name + " wrote 10 pages!");
-            txt_5000[index].setText("" + name + " is soaring! 25 pages written!");
-            txt_10000[index].setText("" + name + " is burning through the page count. 50 pages written today!");
+            txt_1000[index].setText(txt_1000[index].getText().replace("1,000 words", "5 pages"));
+            txt_2000[index].setText(txt_2000[index].getText().replace("2,000 words", "10 pages"));
+            txt_5000[index].setText(txt_5000[index].getText().replace("5,000 words", "25 pages"));
+            txt_10000[index].setText(txt_10000[index].getText().replace("10,000 words", "50 pages"));
         } else {
             lbl_1000[index].setText("<html><b>1,000 Words <br>Reward:</html>");
             lbl_2000[index].setText("<html><b>2,000 Words <br>Reward:</html>");
             lbl_5000[index].setText("<html><b>5,000 Words <br>Reward:</html>");
             lbl_10000[index].setText("<html><b>10,000 Words <br>Reward:</html>");
             if (proj == null) {
-                lbl_wordstocomplete[index].setText("<html><b>Words Left to Complete: 0</html>");
-                lbl_totalwords[index].setText("<html><b>Current Total Words: 0</html>");
-                lbl_milestonecount[index].setText("<html><b>Milestone Word Count: 0</html>");
+                lbl_wordstocomplete[index].setText("<html><b>Words Left to Complete:  <font color=\"blue\">0</font></html>");
+                lbl_totalwords[index].setText("<html><b>Current Total Words:  <font color=\"blue\">0</font></html>");
+                lbl_milestonecount[index].setText("<html><b>Milestone Word Count:  <font color=\"blue\">0</font></html>");
             } else {
                 lbl_wordstocomplete[index].setText("<html><b>Words Left to Complete: <font color=\"blue\">" + (proj.getWordGoal() - proj.getWordsTillDate()) + "</font></html>");
                 lbl_totalwords[index].setText("<html><b>Current Total Words: <font color=\"blue\">" + proj.getCurrentWords() + "</font></html>");
@@ -2146,12 +2099,29 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
 
             }
             lbl_wordgoal[index].setText("<html><b>Word Goal:</html>");
-            txt_1000[index].setText("Congratulations! " + name + " hit 1,000 words !");
-            txt_2000[index].setText("Hooray! " + name + " wrote 2,000 words today");
-            txt_5000[index].setText("" + name + " is soaring! 5,000 words written!");
-            txt_10000[index].setText("" + name + " is burning through the word count. 10,000 words written today!");
+            txt_1000[index].setText(txt_1000[index].getText().replace("5 pages", "1,000 words"));
+            txt_2000[index].setText(txt_2000[index].getText().replace("10 pages", "2,000 words"));
+            txt_5000[index].setText(txt_5000[index].getText().replace("25 pages", "5,000 words"));
+            txt_10000[index].setText(txt_10000[index].getText().replace("50 pages", "10,000 words"));
         }
+        txt_1000[index].setText(txt_1000[index].getText().replace(oldName, name));
+        txt_2000[index].setText(txt_2000[index].getText().replace(oldName, name));
+        txt_5000[index].setText(txt_5000[index].getText().replace(oldName, name));
+        txt_10000[index].setText(txt_10000[index].getText().replace(oldName, name));
 
-        txt_completion[index].setText("Take " + txt_ProjName[index].getText() + " and start editing! Well done!");
+        txt_Milestone_penalty[index].setText(txt_Milestone_penalty[index].getText().replace(oldName, name));
+        txt_Milestone_reward[index].setText(txt_Milestone_reward[index].getText().replace(oldName, name));
+
+        if (proj != null) {
+            txt_completion[index].setText(txt_completion[index].getText().replace(proj.getProjectTitle(), txt_ProjName[index].getText()));
+//            long timeRemaining = TimeUnit.DAYS.convert((proj.getProjectDeadline().getTime() - System.currentTimeMillis()), TimeUnit.MILLISECONDS);
+//            if (timeRemaining < 14) {
+//                lbl_daysLeft[index].setText("<html><b><font color=\"red\">" + timeRemaining + " Days Remaining!</font></html>");
+//            } else {
+//                lbl_daysLeft[index].setText("<html><b>" + timeRemaining + " Days Remaining</html>");
+//            }
+//            lbl_wordstocomplete[index].setText("<html><b>Words Left to Complete: <font color=\"blue\">" + (proj.getWordGoal() - proj.getWordsTillDate()) + "</font></html>");
+//            lbl_milestonecount[index].setText("<html><b>Milestone Word Count: <font color=\"blue\">" + Util.checkMilestoneReward(proj) + "</font></html>");
+        }
     }
 }
