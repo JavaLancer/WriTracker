@@ -1,9 +1,9 @@
 package com.qbit.Assignment;
 
+import com.qbit.Objects.Project;
+
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-
-import com.qbit.Objects.Project;
 
 public class Util {
 	
@@ -14,6 +14,9 @@ public class Util {
 	
 	public static int checkMilestoneReward(Project project){
 		int durationInDays = (int)Util.getDateDiff(new Date(),project.getProjectDeadline(), TimeUnit.DAYS);
+		if (durationInDays <= 0) {
+			durationInDays = 1;
+		}
 		int intervalType = project.getInterval();
 		int milestoneWordCount = 0;
 		int wordsremaining = project.getWordGoal() - project.getCurrentWords();

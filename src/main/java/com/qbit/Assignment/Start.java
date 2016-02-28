@@ -254,11 +254,11 @@ public class Start implements ActionListener, MenuListener {
             mytracker.stopListening();
             mytracker.startListening();
             ActiveTracker.disposeWordCount();
-            ActiveTracker.DisplayWordCount();
-            if (timer != null)
-                timer.cancel();
-            timer = new Timer();
-            timer.schedule(mytracker.new RemindTask(), 5 * 1000, 10 * 1000);
+            mytracker.DisplayWordCount();
+//            if (timer != null)
+//                timer.cancel();
+//            timer = new Timer();
+//            timer.schedule(mytracker.new RemindTask(), 5 * 1000, 10 * 1000);
             project1.setCurrentWords(0);
             System.out.println("Date" + project1.getProjectDeadline());
             if (project1.getProjectDeadline().before(new Date())) {
@@ -270,13 +270,13 @@ public class Start implements ActionListener, MenuListener {
         if (command.equals("2")) {
             mytracker.selectedProject = 2;
             ActiveTracker.disposeWordCount();
-            ActiveTracker.DisplayWordCount();
             mytracker.stopListening();
             mytracker.startListening();
-            if (timer != null)
-                timer.cancel();
-            timer = new Timer();
-            timer.schedule(mytracker.new RemindTask(), 5 * 1000, 10 * 1000);
+            mytracker.DisplayWordCount();
+//            if (timer != null)
+//                timer.cancel();
+//            timer = new Timer();
+//            timer.schedule(mytracker.new RemindTask(), 5 * 1000, 10 * 1000);
             project2.setCurrentWords(0);
             System.out.println("Date" + project2.getProjectDeadline());
             if (project2.getProjectDeadline().before(new Date())) {
@@ -291,11 +291,11 @@ public class Start implements ActionListener, MenuListener {
             mytracker.stopListening();
             mytracker.startListening();
             ActiveTracker.disposeWordCount();
-            ActiveTracker.DisplayWordCount();
-            if (timer != null)
-                timer.cancel();
-            timer = new Timer();
-            timer.schedule(mytracker.new RemindTask(), 5 * 1000, 10 * 1000);
+            mytracker.DisplayWordCount();
+//            if (timer != null)
+//                timer.cancel();
+//            timer = new Timer();
+//            timer.schedule(mytracker.new RemindTask(), 5 * 1000, 10 * 1000);
             project3.setCurrentWords(0);
             System.out.println("Date" + project3.getProjectDeadline());
             if (project3.getProjectDeadline().before(new Date())) {
@@ -309,13 +309,13 @@ public class Start implements ActionListener, MenuListener {
         if (command.equals("4") && general.isActivated()) {
             mytracker.selectedProject = 4;
             ActiveTracker.disposeWordCount();
-            ActiveTracker.DisplayWordCount();
             mytracker.stopListening();
             mytracker.startListening();
-            if (timer != null)
-                timer.cancel();
-            timer = new Timer();
-            timer.schedule(mytracker.new RemindTask(), 5 * 1000, 10 * 1000);
+            mytracker.DisplayWordCount();
+//            if (timer != null)
+//                timer.cancel();
+//            timer = new Timer();
+//            timer.schedule(mytracker.new RemindTask(), 5 * 1000, 10 * 1000);
             project4.setCurrentWords(0);
             System.out.println("Date" + project4.getProjectDeadline());
             if (project4.getProjectDeadline().before(new Date())) {
@@ -330,11 +330,11 @@ public class Start implements ActionListener, MenuListener {
             mytracker.stopListening();
             mytracker.startListening();
             ActiveTracker.disposeWordCount();
-            ActiveTracker.DisplayWordCount();
-            if (timer != null)
-                timer.cancel();
-            timer = new Timer();
-            timer.schedule(mytracker.new RemindTask(), 5 * 1000, 10 * 1000);
+            mytracker.DisplayWordCount();
+//            if (timer != null)
+//                timer.cancel();
+//            timer = new Timer();
+//            timer.schedule(mytracker.new RemindTask(), 5 * 1000, 10 * 1000);
             project5.setCurrentWords(0);
             System.out.println("Date" + project5.getProjectDeadline());
             if (project5.getProjectDeadline().before(new Date())) {

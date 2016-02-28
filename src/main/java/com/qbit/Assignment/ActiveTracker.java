@@ -2,10 +2,10 @@ package com.qbit.Assignment;
 
 import com.qbit.Objects.General;
 import com.qbit.Objects.Project;
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
+import lc.kra.system.keyboard.GlobalKeyboardHook;
+import lc.kra.system.keyboard.event.GlobalKeyAdapter;
+import lc.kra.system.keyboard.event.GlobalKeyEvent;
 import org.jnativehook.keyboard.NativeKeyEvent;
-import org.jnativehook.keyboard.NativeKeyListener;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -19,11 +19,8 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
-import java.util.logging.Filter;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 
-public class ActiveTracker extends JDialog implements NativeKeyListener,ActionListener{
+public class ActiveTracker extends JDialog implements ActionListener{
 	
 	public ActiveTracker(){
 		
@@ -113,8 +110,8 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,ActionLi
 			lbl_status.setText("START Clicked     ");
 			showProjectList();
 			startListening();
-			timer = new Timer();
-			timer.schedule(new RemindTask(), 5* 1000, 10 * 1000);
+//			timer = new Timer();
+//			timer.schedule(new RemindTask(), 5* 1000, 10 * 1000);
 		}else if(ae.getActionCommand().equals("1")){ //start pressed
 			lbl_status.setText(project1.getProjectTitle()+ " Selected");
 			selectedProject = 1;
@@ -253,46 +250,60 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,ActionLi
 	static Project project4;
 	static Project project5;
 	static General general;
-	
+	GlobalKeyboardHook keyboardHook;
 	
 	public void startListening(){ //start listening to word count
-		try {
-            /* Register jNativeHook */
-            GlobalScreen.registerNativeHook();
-            GlobalScreen.addNativeKeyListener(this);
-            Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
+//		try {
+//            /* Register jNativeHook */
+//            GlobalScreen.registerNativeHook();
+//            GlobalScreen.addNativeKeyListener(this);
+//            Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
+//
+//            // This is to stop libriaries own logs
+//            logger.setFilter(new Filter() {
+//
+//				public boolean isLoggable(LogRecord record) {
+//                  if (record.getLoggerName().equals("org.jnativehook")){
+//                	  return false;
+//                   }
+//                  return true;
+//				}});
+//
+//        } catch (NativeHookException exc) {
+//            /* Its error */
+//            System.err.println("There was a problem registering the native hook.");
+//            System.err.println(exc.getMessage());
+//        }
+		keyboardHook = new GlobalKeyboardHook();
+		keyboardHook.addKeyListener(new GlobalKeyAdapter() {
+			@Override
+			public void keyPressed(GlobalKeyEvent event) {
+				nativeKeyPressed(event);
+			}
 
-            // This is to stop libriaries own logs
-            logger.setFilter(new Filter() {
-				
-				public boolean isLoggable(LogRecord record) {
-                  if (record.getLoggerName().equals("org.jnativehook")){
-                	  return false;
-                   }
-                  return true;
-				}});
-        
-        } catch (NativeHookException exc) {
-            /* Its error */
-            System.err.println("There was a problem registering the native hook.");
-            System.err.println(exc.getMessage());
-        }
-		
+			@Override
+			public void keyReleased(GlobalKeyEvent event) {
+				nativeKeyReleased(event);
+			}
+		});
 	}
 	
 	public void stopListening(){ //stop listening to word count
-		try {
-            GlobalScreen.unregisterNativeHook();
-        } catch (NativeHookException e) {
-            e.printStackTrace();
-        }
+//		try {
+//            GlobalScreen.unregisterNativeHook();
+//        } catch (NativeHookException e) {
+//            e.printStackTrace();
+//        }
+		if (keyboardHook != null) {
+			keyboardHook.shutdownHook();
+		}
 	}
 	
-	class RemindTask extends TimerTask {
-	    public void run() {
-	    	updateProjectCount(0);    
-	   }
-	}
+//	class RemindTask extends TimerTask {
+//	    public void run() {
+//	    	updateProjectCount(0);
+//	   }
+//	}
 	static JLabel lbl_display ;
 	static JDialog Displaydialog;
 	static JFrame displayFrame;//test tettett etet 
@@ -302,7 +313,7 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,ActionLi
 				Displaydialog.dispose();
 		}catch(Exception c){}
 	}
-	public static void DisplayWordCount(){
+	public void DisplayWordCount(){
 		displayFrame = new JFrame();
 		Displaydialog = new JDialog(displayFrame,false);
 		Displaydialog.setModalityType(ModalityType.MODELESS);
@@ -327,6 +338,8 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,ActionLi
 		panel.add(lbl_display);
 		Displaydialog.setContentPane(panel);
 		Displaydialog.setVisible(true);
+
+		updateProjectCount(0);
 	}
 	
 	public void showWordCount(int value){
@@ -663,29 +676,29 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,ActionLi
 		           // handle exception
 		        }
 	        	ActiveTracker ex = new ActiveTracker();
-	        	try {
+//	        	try {
 	                /* Register jNativeHook */
-	                GlobalScreen.registerNativeHook();
-	                GlobalScreen.addNativeKeyListener(ex);
-	                Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
+//	                GlobalScreen.registerNativeHook();
+//	                GlobalScreen.addNativeKeyListener(ex);
+//	                Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
 
 	                // This is to stop libriaries own logs
-	                logger.setFilter(new Filter() {
-						
-						public boolean isLoggable(LogRecord record) {
-	                      if (record.getLoggerName().equals("org.jnativehook")){
-	                    	  return false;
-	                       }
-	                      return true;
-						}});
-	            
-	            } catch (NativeHookException exc) {
-	                /* Its error */
-	                System.err.println("There was a problem registering the native hook.");
-	                System.err.println(exc.getMessage());
-	                System.exit(1);
-	            }
-	            ex.setVisible(true);
+//	                logger.setFilter(new Filter() {
+//
+//						public boolean isLoggable(LogRecord record) {
+//	                      if (record.getLoggerName().equals("org.jnativehook")){
+//	                    	  return false;
+//	                       }
+//	                      return true;
+//						}});
+//
+//	            } catch (NativeHookException exc) {
+//	                /* Its error */
+//	                System.err.println("There was a problem registering the native hook.");
+//	                System.err.println(exc.getMessage());
+//	                System.exit(1);
+//	            }
+//	            ex.setVisible(true);
 	        }
 	    });
 	}
@@ -694,25 +707,21 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,ActionLi
 	
 	 int prevKey = 99;
      static volatile int wordCount = 0;
-     int prevPressedKey = 99;
-     
-	/* Key Pressed */
-    public void nativeKeyPressed(NativeKeyEvent e) {
-        //System.out.println("Key Pressed: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
+     int currentWordCount = 0;
+	List<Integer> wordCountList = new ArrayList<>();
 
-    	//System.out.println("Key Pressed: "+e.getKeyCode());
-    	if((prevPressedKey == NativeKeyEvent.VC_CONTROL_L || prevPressedKey == NativeKeyEvent.VC_CONTROL_R)&& e.getKeyCode()== NativeKeyEvent.VC_V){
-    		//capture clipboard data
-    		//System.out.println("Clipboard data:"+getClipboardContents());
+	/* Key Pressed */
+    public void nativeKeyPressed(GlobalKeyEvent e) {
+    	if(e.isControlPressed() && e.getVirtualKeyCode() == GlobalKeyEvent.K_V){
     		try {
 				Thread.sleep(250);
 			} catch (Exception e2) {
 				// TODO: handle exception
 			}
     		updateProjectCount(countWords(getClipboardContents()));
+			currentWordCount = 0;
     	}
-    	prevPressedKey = e.getKeyCode();
-    }
+	}
     
     public static int countWords(String str)
     {
@@ -730,14 +739,46 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,ActionLi
     }
 
     /* Key Released */
-    public void nativeKeyReleased(NativeKeyEvent e) {
-    	if(prevKey == 99)
-    		prevKey = e.getKeyCode();
-    	else{
-    		if(prevKey != NativeKeyEvent.VC_SPACE && (e.getKeyCode()== NativeKeyEvent.VC_SPACE || e.getKeyCode()== NativeKeyEvent.VC_ENTER))
-    		wordcounts.add(wordCount);
-    	}
-    	prevKey = e.getKeyCode();
+    public void nativeKeyReleased(GlobalKeyEvent e) {
+		if (e.getKeyChar() == '\u0000') {
+			return;
+		}
+
+		if (e.getVirtualKeyCode() == GlobalKeyEvent.VK_BACK) {
+			if (currentWordCount == 0) {
+				currentWordCount = wordCountList.size() > 0 ? wordCountList.get(wordCountList.size() - 1) : 0;
+			}
+
+			if (currentWordCount == 1) {
+				wordcounts.clear();
+				updateProjectCount(-1);
+				currentWordCount = wordCountList.size() > 0 ? wordCountList.get(wordCountList.size() - 1) + 1 : 0;
+			} else if (currentWordCount > 1) {
+				currentWordCount--;
+			}
+		} else {
+			currentWordCount++;
+		}
+
+		if (prevKey == GlobalKeyEvent.VK_SPACE && (e.getVirtualKeyCode() == GlobalKeyEvent.VK_SPACE || e.getVirtualKeyCode() == GlobalKeyEvent.VK_TAB)) {
+			return;
+		}
+
+//    	if(prevKey == 99)
+//    		prevKey = e.getVirtualKeyCode();
+//    	else{
+		if (prevKey != GlobalKeyEvent.VK_SPACE && prevKey != 99 && (e.getVirtualKeyCode() == GlobalKeyEvent.VK_SPACE || e.getVirtualKeyCode() == GlobalKeyEvent.VK_RETURN)) {
+			wordcounts.add(wordCount);
+			updateProjectCount(0);
+			wordCountList.add(currentWordCount);
+			currentWordCount = 0;
+		}
+		prevKey = e.getVirtualKeyCode();
+//		}
+
+
+//		currentWordCount = 0;
+
         //System.out.println("Key Released: " + NativeKeyEvent.getKeyText(e.getKeyCode())+"WordCOunt="+wordCount);
         
     }
