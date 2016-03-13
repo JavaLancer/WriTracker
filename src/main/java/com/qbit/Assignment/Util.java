@@ -15,7 +15,7 @@ public class Util {
 	public static int checkMilestoneReward(Project project){
 		int durationInDays = (int)Util.getDateDiff(new Date(),project.getProjectDeadline(), TimeUnit.DAYS);
 		if (durationInDays <= 0) {
-			durationInDays = 1;
+				durationInDays = 1;
 		}
 		int intervalType = project.getInterval();
 		int milestoneWordCount = 0;

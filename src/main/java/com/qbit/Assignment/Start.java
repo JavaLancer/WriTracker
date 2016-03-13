@@ -14,7 +14,6 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -237,7 +236,7 @@ public class Start implements ActionListener, MenuListener {
      * This function handles the action to be performed when the user clicks one of the item in the icon of teh system tray.
      */
     //ActiveTracker tracker;
-    Timer timer;
+//    Timer timer;
 
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
@@ -270,9 +269,9 @@ public class Start implements ActionListener, MenuListener {
         if (command.equals("2")) {
             mytracker.selectedProject = 2;
             ActiveTracker.disposeWordCount();
+            mytracker.DisplayWordCount();
             mytracker.stopListening();
             mytracker.startListening();
-            mytracker.DisplayWordCount();
 //            if (timer != null)
 //                timer.cancel();
 //            timer = new Timer();
@@ -309,9 +308,9 @@ public class Start implements ActionListener, MenuListener {
         if (command.equals("4") && general.isActivated()) {
             mytracker.selectedProject = 4;
             ActiveTracker.disposeWordCount();
+            mytracker.DisplayWordCount();
             mytracker.stopListening();
             mytracker.startListening();
-            mytracker.DisplayWordCount();
 //            if (timer != null)
 //                timer.cancel();
 //            timer = new Timer();
@@ -382,8 +381,8 @@ public class Start implements ActionListener, MenuListener {
             mytracker.selectedProject = 0;
             ActiveTracker.appStatus = false;
             mytracker.stopListening();
-            if (timer != null)
-                timer.cancel();
+//            if (timer != null)
+//                timer.cancel();
         }
 
     }
