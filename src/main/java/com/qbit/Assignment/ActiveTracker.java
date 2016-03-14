@@ -4,7 +4,6 @@ import com.qbit.Objects.General;
 import com.qbit.Objects.Project;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
-import org.jnativehook.NativeInputEvent;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import org.jnativehook.mouse.NativeMouseEvent;
@@ -19,7 +18,8 @@ import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.logging.Filter;
@@ -34,7 +34,7 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 	int selectedProject = 0;
 	JLabel lbl_status;
 	Timer timer;
-	List<Integer> wordcounts = Collections.synchronizedList(new ArrayList());
+//	List<Integer> wordcounts = Collections.synchronizedList(new ArrayList());
 	StandardButton start;
 	static Color bgColor = new Color(176,204,210);
 	public void init(){
@@ -445,112 +445,111 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 			configFile.mkdir();
 		}
 	}
-	
-	public void updateProjectCount(int size){  //the size matters when came from clipboard
+
+    public void updateProjectCount(List<Integer> countList) {
+        addToProjectWordCountList(countList);
+        if (countList.get(0) > 0) {
+            updateProjectCount(countList.size());
+        }
+    }
+
+    private void addToProjectWordCountList(List<Integer> countList) {
+        switch (selectedProject) {
+            case 1:
+                project1.getWordCountList().addAll(countList);
+                break;
+            case 2:
+                project2.getWordCountList().addAll(countList);
+                break;
+            case 3:
+                project3.getWordCountList().addAll(countList);
+                break;
+            case 4:
+                project4.getWordCountList().addAll(countList);
+                break;
+            case 5:
+                project5.getWordCountList().addAll(countList);
+                break;
+        }
+        saveProject();
+    }
+
+    public void updateProjectCount(int size){  //the size matters when came from clipboard
 		if (configPath == null) {
 			setConfigPath();
 		}
 
-		System.out.println("Update Word Count Start"+wordcounts.size());
+//		System.out.println("Update Word Count Start"+wordcounts.size());
 		int wordsRemain = 0; // the word remaining before the updates
 		switch (selectedProject) {
 		case 1:
-			 project1.setCurrentWords(project1.getCurrentWords() +wordcounts.size());
-			 //wordcounts.clear();
-			 project1.setCurrentWords(project1.getCurrentWords() +size);
-			 wordsRemain = project1.getWordsTillDate();
-			 project1.setWordsTillDate(project1.getWordsTillDate() + wordcounts.size() + size) ;
-			 try {
-					FileOutputStream fout = new FileOutputStream(configPath+"\\project1.ser");
-					ObjectOutputStream oos = new ObjectOutputStream(fout);
-					oos.writeObject(project1);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				//checkMilestoneReward(project1,wordsRemain);	
+			if (size != -99) {
+				project1.setCurrentWords(project1.getCurrentWords() + size);
+				wordsRemain = project1.getWordsTillDate();
+				project1.setWordsTillDate(project1.getWordsTillDate() + size);
 				checkWordCountReward(project1,wordsRemain);
-				showWordCount(project1);
+			} else {
+				project1.setCurrentWords(0);
+				project1.setWordsTillDate(0);
+			}
+			showWordCount(project1);
 			 break;
 		case 2:
-			 project2.setCurrentWords(project2.getCurrentWords() +wordcounts.size());
-			 //wordcounts.clear();
-			 project2.setCurrentWords(project2.getCurrentWords() +size);
-			 wordsRemain = project2.getWordsTillDate();
-			 project2.setWordsTillDate(project2.getWordsTillDate() + wordcounts.size() + size) ;
-			 try {
-					FileOutputStream fout = new FileOutputStream(configPath+"\\project2.ser");
-					ObjectOutputStream oos = new ObjectOutputStream(fout);
-					oos.writeObject(project2);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				//checkMilestoneReward(project2,wordsRemain);	
-				checkWordCountReward(project2,wordsRemain);
-				showWordCount(project2);
+			if (size != -99) {
+				project2.setCurrentWords(project2.getCurrentWords() + size);
+				wordsRemain = project2.getWordsTillDate();
+				project2.setWordsTillDate(project2.getWordsTillDate() + size);
+				checkWordCountReward(project2, wordsRemain);
+			} else {
+				project2.setCurrentWords(0);
+				project2.setWordsTillDate(0);
+			}
+			showWordCount(project2);
 			 break;	
 		
 		case 3:
-			 project3.setCurrentWords(project3.getCurrentWords() +wordcounts.size());
-			 //wordcounts.clear();
-			 project3.setCurrentWords(project3.getCurrentWords() +size);
-			 wordsRemain = project3.getWordsTillDate();
-			 project3.setWordsTillDate(project3.getWordsTillDate() + wordcounts.size() + size) ;
-			 try {
-					FileOutputStream fout = new FileOutputStream(configPath+"\\project3.ser");
-					ObjectOutputStream oos = new ObjectOutputStream(fout);
-					oos.writeObject(project3);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				//checkMilestoneReward(project3,wordsRemain);
-				checkWordCountReward(project3,wordsRemain);
-				showWordCount(project3);
-			 break;	
+			if (size != -99) {
+				project3.setCurrentWords(project3.getCurrentWords() + size);
+				wordsRemain = project3.getWordsTillDate();
+				project3.setWordsTillDate(project3.getWordsTillDate() + size);
+				checkWordCountReward(project3, wordsRemain);
+			} else {
+				project3.setCurrentWords(0);
+				project3.setWordsTillDate(0);
+			}
+			showWordCount(project3);
+		 	break;
 		//for project 4 and 5
 		case 4:
-			 project4.setCurrentWords(project4.getCurrentWords() +wordcounts.size());
-			 //wordcounts.clear();
-			 project4.setCurrentWords(project4.getCurrentWords() +size);
-			 wordsRemain = project4.getWordsTillDate();
-			 project4.setWordsTillDate(project4.getWordsTillDate() + wordcounts.size() + size) ;
-			 try {
-					FileOutputStream fout = new FileOutputStream(configPath+"\\project4.ser");
-					ObjectOutputStream oos = new ObjectOutputStream(fout);
-					oos.writeObject(project4);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				//checkMilestoneReward(project2,wordsRemain);	
-				checkWordCountReward(project4,wordsRemain);
-				showWordCount(project4);
+			if (size != -99) {
+				project4.setCurrentWords(project4.getCurrentWords() + size);
+				wordsRemain = project4.getWordsTillDate();
+				project4.setWordsTillDate(project4.getWordsTillDate() + size);
+				checkWordCountReward(project4, wordsRemain);
+			} else {
+				project4.setCurrentWords(0);
+				project4.setWordsTillDate(0);
+			}
+			showWordCount(project4);
 			 break;	
 		
 		case 5:
-			 project5.setCurrentWords(project5.getCurrentWords() +wordcounts.size());
-			 //wordcounts.clear();
-			 project5.setCurrentWords(project5.getCurrentWords() +size);
-			 wordsRemain = project5.getWordsTillDate();
-			 project5.setWordsTillDate(project5.getWordsTillDate() + wordcounts.size() + size) ;
-			 try {
-					FileOutputStream fout = new FileOutputStream(configPath+"\\project5.ser");
-					ObjectOutputStream oos = new ObjectOutputStream(fout);
-					oos.writeObject(project5);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				//checkMilestoneReward(project3,wordsRemain);
-				checkWordCountReward(project5,wordsRemain);
-				showWordCount(project5);
+			if (size != -99) {
+				project5.setCurrentWords(project5.getCurrentWords() + size);
+				wordsRemain = project5.getWordsTillDate();
+				project5.setWordsTillDate(project5.getWordsTillDate() + size);
+				checkWordCountReward(project5, wordsRemain);
+			} else {
+				project5.setCurrentWords(0);
+				project5.setWordsTillDate(0);
+			}
+			showWordCount(project5);
 			 break;
 		default:
 			break;
 		}
-		wordcounts.clear();
+        saveProject();
+//		wordcounts.clear();
 	}
 	
 	
@@ -700,27 +699,48 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 	
 	
 	int prevKey = 99;
-    static volatile int wordCount = 0;
-    int prevPressedKey = 99;
+//    static volatile int wordCount = 0;
+//    int prevPressedKey = 99;
 	int currentWordCount = 0;
-	List<Integer> wordCountList = new ArrayList<>();
+//	List<Integer> wordCountList = new ArrayList<>();
     Date keyPressed = null;
     boolean highlightedText;
      
 	/* Key Pressed */
     public void nativeKeyPressed(NativeKeyEvent e) {
-        //System.out.println("Key Pressed: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
+		int keyCode = e.getKeyCode();
 
-    	//System.out.println("Key Pressed: "+e.getKeyCode());
-        if (e.getKeyCode() == NativeKeyEvent.VC_BACKSPACE && keyPressed == null) {
-            keyPressed = new Date();
-        }
+		if (keyCode == NativeKeyEvent.VC_BACKSPACE) {
+			if (getPreviousWordCount() >= 0) {
+				System.out.println("currentWordCount before backspace: " + currentWordCount);
+				if (currentWordCount > 0) {
+					currentWordCount--;
+				} else {
+					currentWordCount = getPreviousWordCount();
+					takeOffProjectsLastWordCount();
+					if (prevKey != NativeKeyEvent.VC_ENTER && prevKey != NativeKeyEvent.VC_SPACE && prevKey != NativeKeyEvent.VC_TAB) {
+						updateProjectCount(-1);
+					}
+				}
+				System.out.println("currentWordCount on backspace: " + currentWordCount);
+				prevKey = keyCode;
+				return;
+			} else {
+				if (currentWordCount == 0) {
+					updateProjectCount(-99);
+					prevKey = keyCode;
+					return;
+				}
+				currentWordCount--;
+				return;
+			}
+		}
 
-        if (e.getKeyCode() == NativeKeyEvent.VC_DELETE && highlightedText) {
+        if (keyCode == NativeKeyEvent.VC_DELETE && highlightedText) {
 //            try {
             // TODO: get ctrl-c to work
-                NativeInputEvent nativeInputEvent = new NativeInputEvent(GlobalScreen.class, NativeKeyEvent.VC_C, new Date().getTime(), NativeInputEvent.CTRL_MASK);
-                GlobalScreen.postNativeEvent(nativeInputEvent);
+//                NativeInputEvent nativeInputEvent = new NativeInputEvent(GlobalScreen.class, NativeKeyEvent.VC_C, new Date().getTime(), NativeInputEvent.CTRL_MASK);
+//                GlobalScreen.postNativeEvent(nativeInputEvent);
 //                Robot robot = new Robot();
 //                robot.keyPress(KeyEvent.VK_CONTROL);
 //                robot.keyPress(KeyEvent.VK_C);
@@ -730,12 +750,12 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 //            } catch (AWTException | InterruptedException e1) {
 //                e1.printStackTrace();
 //            }
-            updateProjectCount(-countWords(getClipboardContents()));
-            currentWordCount = 0;
+//            updateProjectCount(-countWords(getClipboardContents()));
+//            currentWordCount = 0;
         }
         highlightedText = false;
 
-    	if((prevPressedKey == NativeKeyEvent.VC_CONTROL_L || prevPressedKey == NativeKeyEvent.VC_CONTROL_R)&& e.getKeyCode()== NativeKeyEvent.VC_V){
+    	if((prevKey == NativeKeyEvent.VC_CONTROL_L || prevKey == NativeKeyEvent.VC_CONTROL_R)&& keyCode == NativeKeyEvent.VC_V){
     		//capture clipboard data
     		//System.out.println("Clipboard data:"+getClipboardContents());
     		try {
@@ -745,27 +765,162 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 			}
     		updateProjectCount(countWords(getClipboardContents()));
 			currentWordCount = 0;
+			prevKey = keyCode;
+            return;
     	}
-    	prevPressedKey = e.getKeyCode();
-    }
-    
-    public static int countWords(String str)
-    {
-    	//System.out.println("String is"+str+";");
-    	str = str.trim();
-        int count = 1;
-        for (int i=0;i<=str.length()-1;i++)
-        {
-            if (str.charAt(i) == ' ' && str.charAt(i+1)!=' ')
-            {
-                count++;
+
+        if (prevKey != 99) {
+            if ((prevKey != NativeKeyEvent.VC_SPACE && prevKey != NativeKeyEvent.VC_ENTER && prevKey != NativeKeyEvent.VC_TAB) && (keyCode == NativeKeyEvent.VC_SPACE || keyCode == NativeKeyEvent.VC_ENTER || keyCode == NativeKeyEvent.VC_TAB)) {
+                ArrayList<Integer> countList = new ArrayList<>();
+                countList.add(currentWordCount);
+				System.out.println("currentWordCount added to history: " + currentWordCount);
+				updateProjectCount(countList);
+				currentWordCount = 0;
+				prevKey = keyCode;
+                return;
             }
         }
-        return count;
+
+    	prevKey = keyCode;
+        if (!e.isActionKey() &&  keyCode != NativeKeyEvent.VC_ENTER && keyCode != NativeKeyEvent.VC_SPACE && keyCode != NativeKeyEvent.VC_TAB) {
+            currentWordCount++;
+        }
+//        System.out.println("Key Pressed: " + NativeKeyEvent.getKeyText(keyCode));
+        System.out.println("currentWordCount at end of method: " + currentWordCount);
+    }
+
+    private int getPreviousWordCount() {
+        switch (selectedProject) {
+            case 1:
+				if (project1.getWordCountList().isEmpty()) {
+					return -1;
+				}
+				return project1.getWordCountList().get(project1.getWordCountList().size() - 1);
+            case 2:
+				if (project2.getWordCountList().isEmpty()) {
+					return -1;
+				}
+                return project2.getWordCountList().get(project2.getWordCountList().size() - 1);
+            case 3:
+				if (project3.getWordCountList().isEmpty()) {
+					return -1;
+				}
+                return project3.getWordCountList().get(project3.getWordCountList().size() - 1);
+            case 4:
+				if (project4.getWordCountList().isEmpty()) {
+					return -1;
+				}
+                return project4.getWordCountList().get(project4.getWordCountList().size() - 1);
+            case 5:
+				if (project5.getWordCountList().isEmpty()) {
+					return -1;
+				}
+                return project5.getWordCountList().get(project5.getWordCountList().size() - 1);
+            default:
+                return 0;
+        }
+    }
+
+    private void saveProject() {
+        switch (selectedProject) {
+            case 1:
+                try {
+                    FileOutputStream fout = new FileOutputStream(configPath+"\\project1.ser");
+                    ObjectOutputStream oos = new ObjectOutputStream(fout);
+                    oos.writeObject(project1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case 2:
+                try {
+                    FileOutputStream fout = new FileOutputStream(configPath+"\\project2.ser");
+                    ObjectOutputStream oos = new ObjectOutputStream(fout);
+                    oos.writeObject(project2);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case 3:
+                try {
+                    FileOutputStream fout = new FileOutputStream(configPath+"\\project3.ser");
+                    ObjectOutputStream oos = new ObjectOutputStream(fout);
+                    oos.writeObject(project3);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case 4:
+                try {
+                    FileOutputStream fout = new FileOutputStream(configPath+"\\project4.ser");
+                    ObjectOutputStream oos = new ObjectOutputStream(fout);
+                    oos.writeObject(project4);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case 5:
+                try {
+                    FileOutputStream fout = new FileOutputStream(configPath+"\\project5.ser");
+                    ObjectOutputStream oos = new ObjectOutputStream(fout);
+                    oos.writeObject(project5);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
+    }
+
+    private void takeOffProjectsLastWordCount() {
+        switch (selectedProject) {
+            case 1:
+                if (!project1.getWordCountList().isEmpty()) {
+                    project1.getWordCountList().remove(project1.getWordCountList().size() - 1);
+                }
+                break;
+            case 2:
+                if (!project2.getWordCountList().isEmpty()) {
+                    project2.getWordCountList().remove(project2.getWordCountList().size() - 1);
+                }
+                break;
+            case 3:
+                if (!project3.getWordCountList().isEmpty()) {
+                    project3.getWordCountList().remove(project3.getWordCountList().size() - 1);
+                }
+                break;
+            case 4:
+                if (!project4.getWordCountList().isEmpty()) {
+                    project4.getWordCountList().remove(project4.getWordCountList().size() - 1);
+                }
+                break;
+            case 5:
+                if (!project5.getWordCountList().isEmpty()) {
+                    project5.getWordCountList().remove(project5.getWordCountList().size() - 1);
+                }
+                break;
+        }
+        saveProject();
+    }
+
+    public List<Integer> countWords(String str) {
+    	str = str.trim();
+        int previousPosition = 0;
+        List<Integer> countList = new ArrayList<>();
+        for (int i = 0; i <= str.length()-1; i++) {
+            if (str.charAt(i) == ' ' && str.charAt(i+1)!=' ') {
+                countList.add((i -1) - previousPosition);
+                previousPosition = i;
+            }
+        }
+        return countList;
     }
 
     /* Key Released */
     public void nativeKeyReleased(NativeKeyEvent e) {
+//        System.out.println("Key Released: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
+
+
+//        prevKey = e.getKeyCode();
 //    	if(prevKey == 99)
 //    		prevKey = e.getKeyCode();
 //    	else{
@@ -773,49 +928,28 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 //    		wordcounts.add(wordCount);
 //    	}
 
-        if (e.getKeyCode() == NativeKeyEvent.VC_BACKSPACE) {
-            if (keyPressed != null) {
-                Date keyReleased = new Date();
-                long secondsPressed = (keyReleased.getTime() - keyPressed.getTime())/1000;
-                if (secondsPressed >= 5) {
-                    for (int i = (int) secondsPressed; i >= 5; i = i - 5) {
-                        updateProjectCount(-15);
-                    }
-                } else {
-                    updateProjectCount(-5);
-                }
-                keyPressed = null;
-            }
 
-            if (currentWordCount == 0) {
-                currentWordCount = wordCountList.size() > 0 ? wordCountList.get(wordCountList.size() - 1) : 5;
-            }
 
-            if (currentWordCount == 1) {
-                wordcounts.clear();
-                updateProjectCount(-1);
-                currentWordCount = wordCountList.size() > 0 ? wordCountList.get(wordCountList.size() - 1) + 1 : 5;
-            } else if (currentWordCount > 1) {
-                currentWordCount--;
-            }
-        } else {
-            currentWordCount++;
-        }
+//            if (currentWordCount == 0) {
+//                currentWordCount = wordCountList.size() > 0 ? wordCountList.get(wordCountList.size() - 1) : 5;
+//            }
+//
+//            if (currentWordCount == 1) {
+//                wordcounts.clear();
+//                updateProjectCount(-1);
+//                currentWordCount = wordCountList.size() > 0 ? wordCountList.get(wordCountList.size() - 1) + 1 : 5;
+//            } else if (currentWordCount > 1) {
+//                currentWordCount--;
+//            }
+//        } else {
+//            currentWordCount++;
 
-        if (prevKey == NativeKeyEvent.VC_SPACE && (e.getKeyCode() == NativeKeyEvent.VC_SPACE || e.getKeyCode() == NativeKeyEvent.VC_TAB)) {
-            return;
-        }
+//        if (prevKey == NativeKeyEvent.VC_SPACE && (e.getKeyCode() == NativeKeyEvent.VC_SPACE || e.getKeyCode() == NativeKeyEvent.VC_TAB)) {
+//            return;
+//        }
         //    	if(prevKey == 99)
         //    		prevKey = e.getVirtualKeyCode();
         //    	else{
-        if (prevKey != NativeKeyEvent.VC_SPACE && prevKey != 99 && (e.getKeyCode() == NativeKeyEvent.VC_SPACE || e.getKeyCode() == NativeKeyEvent.VC_ENTER)) {
-            wordcounts.add(wordCount);
-            updateProjectCount(0);
-            wordCountList.add(currentWordCount);
-            currentWordCount = 0;
-        }
-
-        prevKey = e.getKeyCode();
         //System.out.println("Key Released: " + NativeKeyEvent.getKeyText(e.getKeyCode())+"WordCOunt="+wordCount);
         
     }
