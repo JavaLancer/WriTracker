@@ -250,8 +250,8 @@ public class Start implements ActionListener, MenuListener {
         }
         if (command.equals("1")) {
             mytracker.selectedProject = 1;
-            mytracker.stopListening();
-            mytracker.startListening();
+            mytracker.getKeyMonitor().stopListening();
+            mytracker.getKeyMonitor().startListening();
             ActiveTracker.disposeWordCount();
             mytracker.DisplayWordCount();
 //            if (timer != null)
@@ -270,8 +270,8 @@ public class Start implements ActionListener, MenuListener {
             mytracker.selectedProject = 2;
             ActiveTracker.disposeWordCount();
             mytracker.DisplayWordCount();
-            mytracker.stopListening();
-            mytracker.startListening();
+            mytracker.getKeyMonitor().stopListening();
+            mytracker.getKeyMonitor().startListening();
 //            if (timer != null)
 //                timer.cancel();
 //            timer = new Timer();
@@ -287,8 +287,8 @@ public class Start implements ActionListener, MenuListener {
         }
         if (command.equals("3")) {
             mytracker.selectedProject = 3;
-            mytracker.stopListening();
-            mytracker.startListening();
+            mytracker.getKeyMonitor().stopListening();
+            mytracker.getKeyMonitor().startListening();
             ActiveTracker.disposeWordCount();
             mytracker.DisplayWordCount();
 //            if (timer != null)
@@ -309,8 +309,8 @@ public class Start implements ActionListener, MenuListener {
             mytracker.selectedProject = 4;
             ActiveTracker.disposeWordCount();
             mytracker.DisplayWordCount();
-            mytracker.stopListening();
-            mytracker.startListening();
+            mytracker.getKeyMonitor().stopListening();
+            mytracker.getKeyMonitor().startListening();
 //            if (timer != null)
 //                timer.cancel();
 //            timer = new Timer();
@@ -326,8 +326,8 @@ public class Start implements ActionListener, MenuListener {
         }
         if (command.equals("5") && general.isActivated()) {
             mytracker.selectedProject = 5;
-            mytracker.stopListening();
-            mytracker.startListening();
+            mytracker.getKeyMonitor().stopListening();
+            mytracker.getKeyMonitor().startListening();
             ActiveTracker.disposeWordCount();
             mytracker.DisplayWordCount();
 //            if (timer != null)
@@ -380,7 +380,7 @@ public class Start implements ActionListener, MenuListener {
             ActiveTracker.disposeWordCount();
             mytracker.selectedProject = 0;
             ActiveTracker.appStatus = false;
-            mytracker.stopListening();
+            mytracker.getKeyMonitor().stopListening();
 //            if (timer != null)
 //                timer.cancel();
         }

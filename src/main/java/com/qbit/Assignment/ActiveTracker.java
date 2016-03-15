@@ -2,38 +2,32 @@ package com.qbit.Assignment;
 
 import com.qbit.Objects.General;
 import com.qbit.Objects.Project;
+import com.qbit.Util.KeyMonitor;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
-import org.jnativehook.keyboard.NativeKeyEvent;
-import org.jnativehook.keyboard.NativeKeyListener;
 import org.jnativehook.mouse.NativeMouseEvent;
 import org.jnativehook.mouse.NativeMouseInputListener;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Timer;
 import java.util.logging.Filter;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMouseInputListener,ActionListener{
+public class ActiveTracker extends JDialog implements NativeMouseInputListener,ActionListener{
+
+	private KeyMonitor keyMonitor;
 	
 	public ActiveTracker(){
-		
+		keyMonitor = new KeyMonitor(this);
 	}
 	int selectedProject = 0;
 	JLabel lbl_status;
-	Timer timer;
 //	List<Integer> wordcounts = Collections.synchronizedList(new ArrayList());
 	StandardButton start;
 	static Color bgColor = new Color(176,204,210);
@@ -77,7 +71,11 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 		//setUndecorated(true);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
-	
+
+	public KeyMonitor getKeyMonitor() {
+		return keyMonitor;
+	}
+
 	private void showProjectList(){
 	      final JPopupMenu editMenu = new JPopupMenu("Select Project"); 
 	      
@@ -115,7 +113,7 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 		if(ae.getActionCommand().equals("S")){ 		//start pressed
 			lbl_status.setText("START Clicked     ");
 			showProjectList();
-			startListening();
+			keyMonitor.startListening();
 //			timer = new Timer();
 //			timer.schedule(new RemindTask(), 5* 1000, 10 * 1000);
 		}else if(ae.getActionCommand().equals("1")){ //start pressed
@@ -124,6 +122,7 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 			//start.setBackground(Color.GRAY);
 			start.setEnabled(false);
 			project1.setCurrentWords(0);
+			keyMonitor.setKeyList(project1.getWordCountList());
 			WriDemo.proj1SessionStart = false;
 			appStatus = true;
 			//showProjectList();
@@ -133,6 +132,7 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 			//start.setBackground(Color.GRAY);
 			start.setEnabled(false);
 			project2.setCurrentWords(0);
+			keyMonitor.setKeyList(project2.getWordCountList());
 			WriDemo.proj2SessionStart = false;
 			appStatus = true;
 			//showProjectList();
@@ -142,14 +142,31 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 			//start.setBackground(Color.GRAY);
 			start.setEnabled(false);
 			project3.setCurrentWords(0);
+			keyMonitor.setKeyList(project3.getWordCountList());
 			WriDemo.proj3SessionStart = false;
 			appStatus = true;
 			//showProjectList();
 		}else{ //Stop pressed
-			if(timer!=null)
-				timer.cancel();
-			selectedProject = 0;	
-			stopListening();
+			keyMonitor.stopListening();
+			switch (selectedProject) {
+				case 1:
+					project1.setWordCountList(keyMonitor.getKeyList());
+					break;
+				case 2:
+					project2.setWordCountList(keyMonitor.getKeyList());
+					break;
+				case 3:
+					project3.setWordCountList(keyMonitor.getKeyList());
+					break;
+				case 4:
+					project4.setWordCountList(keyMonitor.getKeyList());
+					break;
+				case 5:
+					project5.setWordCountList(keyMonitor.getKeyList());
+					break;
+			}
+			saveProject();
+			selectedProject = 0;
 			lbl_status.setText("STOP Clicked        ");
 			start.setEnabled(true);
 			appStatus = false;
@@ -160,95 +177,26 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 		}
 	}
 	
-	
-	public void Start(){
-		configPath = System.getenv("WRITRACK_HOME");
-		if(configPath==null)
-			configPath="C:\\Config";
-		ObjectInputStream ois;
+//	public String getClipboardContents() {
+//	    String result = "";
+//	    Clipboard clipboard = this.getToolkit().getSystemClipboard();
+//	    Transferable contents = clipboard.getContents(null);
+//	    boolean hasTransferableText =
+//	      (contents != null) &&
+//	      contents.isDataFlavorSupported(DataFlavor.stringFlavor)
+//	    ;
+//	    if (hasTransferableText) {
+//	      try {
+//	        result = (String)contents.getTransferData(DataFlavor.stringFlavor);
+//	      }
+//	      catch (Exception ex){
+//	        System.out.println(ex);
+//	        ex.printStackTrace();
+//	      }
+//	    }
+//	    return result;
+//	  }
 
-		try {
-			FileInputStream fin = new FileInputStream(configPath+"\\general.ser");
-			ois = new ObjectInputStream(fin);
-			general = (General) ois.readObject();
-		} catch (Exception e) {
-			//e.printStackTrace();
-		}
-
-		try {
-			FileInputStream fin = new FileInputStream(configPath+"\\project1.ser");
-			ois = new ObjectInputStream(fin);
-			project1 = (Project) ois.readObject();
-		} catch (Exception e) {
-			//e.printStackTrace();
-		}
-		
-		try {
-			FileInputStream fin = new FileInputStream(configPath+"\\project2.ser");
-			ois = new ObjectInputStream(fin);
-			project2 = (Project) ois.readObject();
-		} catch (Exception e) {
-			//e.printStackTrace();
-		}
-		
-		try {
-			FileInputStream fin = new FileInputStream(configPath+"\\project3.ser");
-			ois = new ObjectInputStream(fin);
-			project3 = (Project) ois.readObject();
-		} catch (Exception e) {
-			//e.printStackTrace();
-		}
-
-		if (general.isActivated()) {
-			try {
-				FileInputStream fin = new FileInputStream(configPath+"\\project4.ser");
-				ois = new ObjectInputStream(fin);
-				project4 = (Project) ois.readObject();
-			} catch (Exception e) {
-				//e.printStackTrace();
-			}
-
-			try {
-				FileInputStream fin = new FileInputStream(configPath+"\\project5.ser");
-				ois = new ObjectInputStream(fin);
-				project5 = (Project) ois.readObject();
-			} catch (Exception e) {
-				//e.printStackTrace();
-			}
-		}
-
-		if(project1 == null && project2 == null && project3 == null && project4 == null && project5 == null){
-			JOptionPane.showMessageDialog(this,"Please enter Project Info first","Input Validation Error",JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		
-		init();
-		//showProjectList();
-		setVisible(true);
-	}
-	
-	
-	public String getClipboardContents() {
-	    String result = "";
-	    Clipboard clipboard = this.getToolkit().getSystemClipboard();
-	    Transferable contents = clipboard.getContents(null);
-	    boolean hasTransferableText =
-	      (contents != null) &&
-	      contents.isDataFlavorSupported(DataFlavor.stringFlavor)
-	    ;
-	    if (hasTransferableText) {
-	      try {
-	        result = (String)contents.getTransferData(DataFlavor.stringFlavor);
-	      }
-	      catch (Exception ex){
-	        System.out.println(ex);
-	        ex.printStackTrace();
-	      }
-	    }
-	    return result;
-	  }
-		
-	
 	static String configPath;
 	static Project project1;
 	static Project project2;
@@ -256,48 +204,7 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 	static Project project4;
 	static Project project5;
 	static General general;
-	
-	
-	public void startListening(){ //start listening to word count
-		try {
-            /* Register jNativeHook */
-            GlobalScreen.registerNativeHook();
-            GlobalScreen.addNativeKeyListener(this);
-            GlobalScreen.addNativeMouseListener(this);
-            GlobalScreen.addNativeMouseMotionListener(this);
-            Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
 
-            // This is to stop libriaries own logs
-            logger.setFilter(new Filter() {
-				
-				public boolean isLoggable(LogRecord record) {
-                  if (record.getLoggerName().equals("org.jnativehook")){
-                	  return false;
-                   }
-                  return true;
-				}});
-        
-        } catch (NativeHookException exc) {
-            /* Its error */
-            System.err.println("There was a problem registering the native hook.");
-            System.err.println(exc.getMessage());
-        }
-		
-	}
-	
-	public void stopListening(){ //stop listening to word count
-		try {
-            GlobalScreen.unregisterNativeHook();
-        } catch (NativeHookException e) {
-            e.printStackTrace();
-        }
-	}
-	
-//	class RemindTask extends TimerTask {
-//	    public void run() {
-//	    	updateProjectCount(0);
-//	   }
-//	}
 	static JLabel lbl_display ;
 	static JDialog Displaydialog;
 	static JFrame displayFrame;//test tettett etet 
@@ -397,22 +304,8 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 			lbl_display.setText(""+tillDate+"/"+total);
 		else
 			lbl_display.setText("Session :"+sessionTotal);
-		
-		
-		//try {
-		//	Thread.sleep(2000);
-		//} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-		//	e.printStackTrace();
-		//}
-		//dialog.dispose();
 	}
-	
-	
-	
-	
-	
-	
+
 	public void showWordCount(Project project){
 		switch (general.getShowCount()) {
 		case 0:
@@ -446,46 +339,10 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 		}
 	}
 
-    public void updateProjectCount(List<Integer> countList) {
-        addToProjectWordCountList(countList);
-        if (countList.get(0) > 0) {
-            updateProjectCount(countList.size());
-        }
-    }
-
-    private void addToProjectWordCountList(List<Integer> countList) {
-        switch (selectedProject) {
-            case 1:
-                project1.getWordCountList().addAll(countList);
-                break;
-            case 2:
-                project2.getWordCountList().addAll(countList);
-                break;
-            case 3:
-                project3.getWordCountList().addAll(countList);
-                break;
-            case 4:
-                project4.getWordCountList().addAll(countList);
-                break;
-            case 5:
-                project5.getWordCountList().addAll(countList);
-                break;
-        }
-        saveProject();
-    }
-
     public void updateProjectCount(int size){  //the size matters when came from clipboard
 		if (configPath == null) {
 			setConfigPath();
 		}
-
-        if (size > 100) {
-            // Special entry for double spaces, enters and tabs
-            List<Integer> countList = new ArrayList<>();
-            countList.add(size);
-            addToProjectWordCountList(countList);
-            return;
-        }
 
 //		System.out.println("Update Word Count Start"+wordcounts.size());
 		int wordsRemain = 0; // the word remaining before the updates
@@ -557,12 +414,8 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 			break;
 		}
         saveProject();
-//		wordcounts.clear();
 	}
-	
-	
 
-	
 	public void checkWordCountReward(Project project, int previousCount){
 		
 		int wordsTillDate = project.getWordsTillDate();
@@ -621,34 +474,16 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 	}
 	
 	public void postonMedia(String str){
-		//read config file first
-
-		try {
-//			Properties prop = new Properties();
-//			String propFileName = "media.properties";
-//			configPath = System.getenv("WRITRACK_HOME");
-//			if(configPath==null)
-//				configPath="C:\\Config";
-//			prop.load(new FileReader(configPath+"\\"+propFileName));
-			
-			//Facebook Post
-			FacebookController.postToFacebook(str);
-			
-			//Twitter Post
-			TwitterController.postToTwitter(str);
-			
-		}catch(Exception c){
-			System.out.println(" Facebook Twitter posting not working :"+c.getMessage());
-		}
+		FacebookController.postToFacebook(str);
+		TwitterController.postToTwitter(str);
 	}
 	
 	public static void main(String[] args) {
-		//
 		configPath = System.getenv("WRITRACK_HOME");
 		if(configPath==null)
 			configPath="C:\\Config";
 		ObjectInputStream ois;
-    	//
+
 		try {
 			FileInputStream fin = new FileInputStream(configPath+"\\project1.ser");
 			ois = new ObjectInputStream(fin);
@@ -680,7 +515,7 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 	        	try {
 	                /* Register jNativeHook */
 	                GlobalScreen.registerNativeHook();
-	                GlobalScreen.addNativeKeyListener(ex);
+//	                GlobalScreen.addNativeKeyListener(ex);
 	                Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
 
 	                // This is to stop libriaries own logs
@@ -703,153 +538,114 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 	        }
 	    });
 	}
-	
-	
-	
-	int prevKey = 99;
-//    static volatile int wordCount = 0;
-//    int prevPressedKey = 99;
-	int currentWordCount = 0;
-//	List<Integer> wordCountList = new ArrayList<>();
+
     Date keyPressed = null;
     boolean highlightedText;
      
 	/* Key Pressed */
-    public void nativeKeyPressed(NativeKeyEvent e) {
-		int keyCode = e.getKeyCode();
-
-		if (keyCode == NativeKeyEvent.VC_BACKSPACE) {
-            if (currentWordCount == 0 && getPreviousWordCount() > 100) {
-                // Special entry for double spaces, enters and tabs
-                takeOffProjectsLastWordCount();
-                prevKey = keyCode;
-                return;
-            }
-            if (getPreviousWordCount() >= 0) {
-				System.out.println("currentWordCount before backspace: " + currentWordCount);
-				if (currentWordCount > 0) {
-					currentWordCount--;
-				} else {
-					currentWordCount = getPreviousWordCount();
-					takeOffProjectsLastWordCount();
-					if (prevKey != NativeKeyEvent.VC_ENTER && prevKey != NativeKeyEvent.VC_SPACE && prevKey != NativeKeyEvent.VC_TAB) {
-						updateProjectCount(-1);
-					}
-				}
-				System.out.println("currentWordCount on backspace: " + currentWordCount);
-				prevKey = keyCode;
-				return;
-			} else {
-				if (currentWordCount == 0) {
-					updateProjectCount(-99);
-					prevKey = keyCode;
-					return;
-				}
-				currentWordCount--;
-				return;
-			}
-		}
-
-        if (keyCode == NativeKeyEvent.VC_DELETE && highlightedText) {
-//            try {
-            // TODO: get ctrl-c to work
-//                NativeInputEvent nativeInputEvent = new NativeInputEvent(GlobalScreen.class, NativeKeyEvent.VC_C, new Date().getTime(), NativeInputEvent.CTRL_MASK);
-//                GlobalScreen.postNativeEvent(nativeInputEvent);
-//                Robot robot = new Robot();
-//                robot.keyPress(KeyEvent.VK_CONTROL);
-//                robot.keyPress(KeyEvent.VK_C);
-//                Thread.sleep(250);
-//                robot.keyRelease(KeyEvent.VK_CONTROL);
-//                robot.keyRelease(KeyEvent.VK_CONTROL);
-//            } catch (AWTException | InterruptedException e1) {
-//                e1.printStackTrace();
+//    public void nativeKeyPressed(NativeKeyEvent e) {
+//		int keyCode = e.getKeyCode();
+//
+//		if (keyCode == NativeKeyEvent.VC_BACKSPACE) {
+//            if (currentWordCount == 0 && getPreviousWordCount() > 100) {
+//                // Special entry for double spaces, enters and tabs
+//                takeOffProjectsLastWordCount();
+//                prevKey = keyCode;
+//                return;
 //            }
-//            updateProjectCount(-countWords(getClipboardContents()));
+//            if (getPreviousWordCount() >= 0) {
+//				System.out.println("currentWordCount before backspace: " + currentWordCount);
+//				if (currentWordCount > 0) {
+//					currentWordCount--;
+//				} else {
+//					currentWordCount = getPreviousWordCount();
+//					takeOffProjectsLastWordCount();
+//					if (prevKey != NativeKeyEvent.VC_ENTER && prevKey != NativeKeyEvent.VC_SPACE && prevKey != NativeKeyEvent.VC_TAB) {
+//						updateProjectCount(-1);
+//					}
+//				}
+//				System.out.println("currentWordCount on backspace: " + currentWordCount);
+//				prevKey = keyCode;
+//				return;
+//			} else {
+//				if (currentWordCount == 0) {
+//					updateProjectCount(-99);
+//					prevKey = keyCode;
+//					return;
+//				}
+//				currentWordCount--;
+//				return;
+//			}
+//		}
+//
+//        if (keyCode == NativeKeyEvent.VC_DELETE && highlightedText) {
+////            try {
+//            // TODO: get ctrl-c to work
+////                NativeInputEvent nativeInputEvent = new NativeInputEvent(GlobalScreen.class, NativeKeyEvent.VC_C, new Date().getTime(), NativeInputEvent.CTRL_MASK);
+////                GlobalScreen.postNativeEvent(nativeInputEvent);
+////                Robot robot = new Robot();
+////                robot.keyPress(KeyEvent.VK_CONTROL);
+////                robot.keyPress(KeyEvent.VK_C);
+////                Thread.sleep(250);
+////                robot.keyRelease(KeyEvent.VK_CONTROL);
+////                robot.keyRelease(KeyEvent.VK_CONTROL);
+////            } catch (AWTException | InterruptedException e1) {
+////                e1.printStackTrace();
+////            }
+////            updateProjectCount(-countWords(getClipboardContents()));
+////            currentWordCount = 0;
+//        }
+//        highlightedText = false;
+//
+//    	if((prevKey == NativeKeyEvent.VC_CONTROL_L || prevKey == NativeKeyEvent.VC_CONTROL_R)&& keyCode == NativeKeyEvent.VC_V){
+//    		//capture clipboard data
+//    		//System.out.println("Clipboard data:"+getClipboardContents());
+//    		try {
+//				Thread.sleep(250);
+//			} catch (Exception e2) {
+//				// TODO: handle exception
+//			}
+//            System.out.println("List: " + project1.getWordCountList());
+//            updateProjectCount(countWords(getClipboardContents()));
+//            System.out.println("List: " + project1.getWordCountList());
 //            currentWordCount = 0;
-        }
-        highlightedText = false;
-
-    	if((prevKey == NativeKeyEvent.VC_CONTROL_L || prevKey == NativeKeyEvent.VC_CONTROL_R)&& keyCode == NativeKeyEvent.VC_V){
-    		//capture clipboard data
-    		//System.out.println("Clipboard data:"+getClipboardContents());
-    		try {
-				Thread.sleep(250);
-			} catch (Exception e2) {
-				// TODO: handle exception
-			}
-            System.out.println("List: " + project1.getWordCountList());
-            updateProjectCount(countWords(getClipboardContents()));
-            System.out.println("List: " + project1.getWordCountList());
-            currentWordCount = 0;
-			prevKey = keyCode;
-            return;
-    	}
-
-        if (prevKey != 99) {
-            if (prevKey == NativeKeyEvent.VC_SPACE && keyCode == NativeKeyEvent.VC_SPACE) {
-                updateProjectCount(101);
-            }
-
-            if (prevKey == NativeKeyEvent.VC_ENTER && keyCode == NativeKeyEvent.VC_ENTER) {
-                updateProjectCount(101);
-            }
-
-            if (prevKey == NativeKeyEvent.VC_TAB && keyCode == NativeKeyEvent.VC_TAB) {
-                updateProjectCount(101);
-            }
-
-            if ((prevKey != NativeKeyEvent.VC_SPACE && prevKey != NativeKeyEvent.VC_ENTER && prevKey != NativeKeyEvent.VC_TAB) && (keyCode == NativeKeyEvent.VC_SPACE || keyCode == NativeKeyEvent.VC_ENTER || keyCode == NativeKeyEvent.VC_TAB)) {
-                ArrayList<Integer> countList = new ArrayList<>();
-                countList.add(currentWordCount);
-				System.out.println("currentWordCount added to history: " + currentWordCount);
-				updateProjectCount(countList);
-                System.out.println("List: " + project1.getWordCountList());
-            }
-
-            currentWordCount = 0;
-            prevKey = keyCode;
-            return;
-        }
-
-    	prevKey = keyCode;
-        if (!e.isActionKey() &&  keyCode != NativeKeyEvent.VC_ENTER && keyCode != NativeKeyEvent.VC_SPACE && keyCode != NativeKeyEvent.VC_TAB) {
-            currentWordCount++;
-        }
-//        System.out.println("Key Pressed: " + NativeKeyEvent.getKeyText(keyCode));
-        System.out.println("currentWordCount at end of method: " + currentWordCount);
-    }
-
-    private int getPreviousWordCount() {
-        switch (selectedProject) {
-            case 1:
-				if (project1.getWordCountList().isEmpty()) {
-					return -1;
-				}
-				return project1.getWordCountList().get(project1.getWordCountList().size() - 1);
-            case 2:
-				if (project2.getWordCountList().isEmpty()) {
-					return -1;
-				}
-                return project2.getWordCountList().get(project2.getWordCountList().size() - 1);
-            case 3:
-				if (project3.getWordCountList().isEmpty()) {
-					return -1;
-				}
-                return project3.getWordCountList().get(project3.getWordCountList().size() - 1);
-            case 4:
-				if (project4.getWordCountList().isEmpty()) {
-					return -1;
-				}
-                return project4.getWordCountList().get(project4.getWordCountList().size() - 1);
-            case 5:
-				if (project5.getWordCountList().isEmpty()) {
-					return -1;
-				}
-                return project5.getWordCountList().get(project5.getWordCountList().size() - 1);
-            default:
-                return 0;
-        }
-    }
+//			prevKey = keyCode;
+//            return;
+//    	}
+//
+//        if (prevKey != 99) {
+//            if (prevKey == NativeKeyEvent.VC_SPACE && keyCode == NativeKeyEvent.VC_SPACE) {
+//                updateProjectCount(101);
+//            }
+//
+//            if (prevKey == NativeKeyEvent.VC_ENTER && keyCode == NativeKeyEvent.VC_ENTER) {
+//                updateProjectCount(101);
+//            }
+//
+//            if (prevKey == NativeKeyEvent.VC_TAB && keyCode == NativeKeyEvent.VC_TAB) {
+//                updateProjectCount(101);
+//            }
+//
+//            if ((prevKey != NativeKeyEvent.VC_SPACE && prevKey != NativeKeyEvent.VC_ENTER && prevKey != NativeKeyEvent.VC_TAB) && (keyCode == NativeKeyEvent.VC_SPACE || keyCode == NativeKeyEvent.VC_ENTER || keyCode == NativeKeyEvent.VC_TAB)) {
+//                ArrayList<Integer> countList = new ArrayList<>();
+//                countList.add(currentWordCount);
+//				System.out.println("currentWordCount added to history: " + currentWordCount);
+//				updateProjectCount(countList);
+//                System.out.println("List: " + project1.getWordCountList());
+//            }
+//
+//            currentWordCount = 0;
+//            prevKey = keyCode;
+//            return;
+//        }
+//
+//    	prevKey = keyCode;
+//        if (!e.isActionKey() &&  keyCode != NativeKeyEvent.VC_ENTER && keyCode != NativeKeyEvent.VC_SPACE && keyCode != NativeKeyEvent.VC_TAB) {
+//            currentWordCount++;
+//        }
+////        System.out.println("Key Pressed: " + NativeKeyEvent.getKeyText(keyCode));
+//        System.out.println("currentWordCount at end of method: " + currentWordCount);
+//    }
 
     private void saveProject() {
         switch (selectedProject) {
@@ -901,100 +697,25 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
         }
     }
 
-    private void takeOffProjectsLastWordCount() {
-        switch (selectedProject) {
-            case 1:
-                if (!project1.getWordCountList().isEmpty()) {
-                    project1.getWordCountList().remove(project1.getWordCountList().size() - 1);
-                }
-                break;
-            case 2:
-                if (!project2.getWordCountList().isEmpty()) {
-                    project2.getWordCountList().remove(project2.getWordCountList().size() - 1);
-                }
-                break;
-            case 3:
-                if (!project3.getWordCountList().isEmpty()) {
-                    project3.getWordCountList().remove(project3.getWordCountList().size() - 1);
-                }
-                break;
-            case 4:
-                if (!project4.getWordCountList().isEmpty()) {
-                    project4.getWordCountList().remove(project4.getWordCountList().size() - 1);
-                }
-                break;
-            case 5:
-                if (!project5.getWordCountList().isEmpty()) {
-                    project5.getWordCountList().remove(project5.getWordCountList().size() - 1);
-                }
-                break;
-        }
-        saveProject();
-    }
-
-    public List<Integer> countWords(String str) {
-    	str = str.trim();
-        int previousPosition = 0;
-        List<Integer> countList = new ArrayList<>();
-        for (int i = 0; i <= str.length()-1; i++) {
-            if (str.charAt(i) == ' ' && str.charAt(i+1) != ' ') {
-                countList.add(i - previousPosition);
-                previousPosition = i + 1;
-            }
-        }
-
-
-
-        if (previousPosition < str.length()) {
-            countList.add(str.length() - previousPosition);
-        }
-
-        return countList;
-    }
-
-    /* Key Released */
-    public void nativeKeyReleased(NativeKeyEvent e) {
-//        System.out.println("Key Released: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
-
-
-//        prevKey = e.getKeyCode();
-//    	if(prevKey == 99)
-//    		prevKey = e.getKeyCode();
-//    	else{
-//    		if(prevKey != NativeKeyEvent.VC_SPACE && (e.getKeyCode()== NativeKeyEvent.VC_SPACE || e.getKeyCode()== NativeKeyEvent.VC_ENTER))
-//    		wordcounts.add(wordCount);
-//    	}
-
-
-
-//            if (currentWordCount == 0) {
-//                currentWordCount = wordCountList.size() > 0 ? wordCountList.get(wordCountList.size() - 1) : 5;
+//    public List<Integer> countWords(String str) {
+//    	str = str.trim();
+//        int previousPosition = 0;
+//        List<Integer> countList = new ArrayList<>();
+//        for (int i = 0; i <= str.length()-1; i++) {
+//            if (str.charAt(i) == ' ' && str.charAt(i+1) != ' ') {
+//                countList.add(i - previousPosition);
+//                previousPosition = i + 1;
 //            }
-//
-//            if (currentWordCount == 1) {
-//                wordcounts.clear();
-//                updateProjectCount(-1);
-//                currentWordCount = wordCountList.size() > 0 ? wordCountList.get(wordCountList.size() - 1) + 1 : 5;
-//            } else if (currentWordCount > 1) {
-//                currentWordCount--;
-//            }
-//        } else {
-//            currentWordCount++;
-
-//        if (prevKey == NativeKeyEvent.VC_SPACE && (e.getKeyCode() == NativeKeyEvent.VC_SPACE || e.getKeyCode() == NativeKeyEvent.VC_TAB)) {
-//            return;
 //        }
-        //    	if(prevKey == 99)
-        //    		prevKey = e.getVirtualKeyCode();
-        //    	else{
-        //System.out.println("Key Released: " + NativeKeyEvent.getKeyText(e.getKeyCode())+"WordCOunt="+wordCount);
-        
-    }
-
-    /* I can't find any output from this call */
-    public void nativeKeyTyped(NativeKeyEvent e) {
-        //System.out.println("Key Typed: " + e.getKeyText(e.getKeyCode()));
-    }
+//
+//
+//
+//        if (previousPosition < str.length()) {
+//            countList.add(str.length() - previousPosition);
+//        }
+//
+//        return countList;
+//    }
 
     @Override
     public void nativeMouseClicked(NativeMouseEvent nativeMouseEvent) {
