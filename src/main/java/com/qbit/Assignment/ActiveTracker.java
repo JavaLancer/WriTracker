@@ -479,6 +479,14 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 			setConfigPath();
 		}
 
+        if (size > 100) {
+            // Special entry for double spaces, enters and tabs
+            List<Integer> countList = new ArrayList<>();
+            countList.add(size);
+            addToProjectWordCountList(countList);
+            return;
+        }
+
 //		System.out.println("Update Word Count Start"+wordcounts.size());
 		int wordsRemain = 0; // the word remaining before the updates
 		switch (selectedProject) {
@@ -711,7 +719,13 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 		int keyCode = e.getKeyCode();
 
 		if (keyCode == NativeKeyEvent.VC_BACKSPACE) {
-			if (getPreviousWordCount() >= 0) {
+            if (currentWordCount == 0 && getPreviousWordCount() > 100) {
+                // Special entry for double spaces, enters and tabs
+                takeOffProjectsLastWordCount();
+                prevKey = keyCode;
+                return;
+            }
+            if (getPreviousWordCount() >= 0) {
 				System.out.println("currentWordCount before backspace: " + currentWordCount);
 				if (currentWordCount > 0) {
 					currentWordCount--;
@@ -763,22 +777,38 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
 			} catch (Exception e2) {
 				// TODO: handle exception
 			}
-    		updateProjectCount(countWords(getClipboardContents()));
-			currentWordCount = 0;
+            System.out.println("List: " + project1.getWordCountList());
+            updateProjectCount(countWords(getClipboardContents()));
+            System.out.println("List: " + project1.getWordCountList());
+            currentWordCount = 0;
 			prevKey = keyCode;
             return;
     	}
 
         if (prevKey != 99) {
+            if (prevKey == NativeKeyEvent.VC_SPACE && keyCode == NativeKeyEvent.VC_SPACE) {
+                updateProjectCount(101);
+            }
+
+            if (prevKey == NativeKeyEvent.VC_ENTER && keyCode == NativeKeyEvent.VC_ENTER) {
+                updateProjectCount(101);
+            }
+
+            if (prevKey == NativeKeyEvent.VC_TAB && keyCode == NativeKeyEvent.VC_TAB) {
+                updateProjectCount(101);
+            }
+
             if ((prevKey != NativeKeyEvent.VC_SPACE && prevKey != NativeKeyEvent.VC_ENTER && prevKey != NativeKeyEvent.VC_TAB) && (keyCode == NativeKeyEvent.VC_SPACE || keyCode == NativeKeyEvent.VC_ENTER || keyCode == NativeKeyEvent.VC_TAB)) {
                 ArrayList<Integer> countList = new ArrayList<>();
                 countList.add(currentWordCount);
 				System.out.println("currentWordCount added to history: " + currentWordCount);
 				updateProjectCount(countList);
-				currentWordCount = 0;
-				prevKey = keyCode;
-                return;
+                System.out.println("List: " + project1.getWordCountList());
             }
+
+            currentWordCount = 0;
+            prevKey = keyCode;
+            return;
         }
 
     	prevKey = keyCode;
@@ -907,11 +937,18 @@ public class ActiveTracker extends JDialog implements NativeKeyListener,NativeMo
         int previousPosition = 0;
         List<Integer> countList = new ArrayList<>();
         for (int i = 0; i <= str.length()-1; i++) {
-            if (str.charAt(i) == ' ' && str.charAt(i+1)!=' ') {
-                countList.add((i -1) - previousPosition);
-                previousPosition = i;
+            if (str.charAt(i) == ' ' && str.charAt(i+1) != ' ') {
+                countList.add(i - previousPosition);
+                previousPosition = i + 1;
             }
         }
+
+
+
+        if (previousPosition < str.length()) {
+            countList.add(str.length() - previousPosition);
+        }
+
         return countList;
     }
 
