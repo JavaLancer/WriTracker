@@ -75,6 +75,18 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
                 System.out.println("Time zone id" + easternTimeZone);
             }
         }
+
+        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                if (btnGeneralSave.isVisible() || btnProjectSave.isVisible()) {
+                    JOptionPane.showMessageDialog(windowEvent.getWindow(), "Preferences and projects need to be saved before exiting.", "Save Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    windowEvent.getWindow().dispose();
+                }
+            }
+        });
     }
 
     public void showActivate(boolean showActivate) {
@@ -483,7 +495,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
 
         JLabel label1 = new JLabel("Support");
         label1.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        label1.setToolTipText("admin@evicuna.com");
+        label1.setToolTipText("http://www.oulton.org/vicuna/evp.nsf/95b6226ead09deef84257e94006e2b98/048d7b26a182014384257e8100560c31!OpenDocument");
         label1.setFont(fontBold);
         leftPanel.add(Box.createRigidArea(new Dimension(5, 25)));
         leftPanel.add(label1);
@@ -501,11 +513,11 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
 
         JLabel label3 = new JLabel("Contact Us");
         label3.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        label3.setToolTipText("admin@evicuna.com");
+        label3.setToolTipText("mailto:admin@evicuna.com");
         label3.setFont(fontBold);
         leftPanel.add(Box.createRigidArea(new Dimension(5, 25)));
         leftPanel.add(label3);
-        label3.setName("Support");
+        label3.setName("Contact Us");
         goWebsite(label3);
 
         StandardButton btnFacebook = new StandardButton("Connect To Facebook");
@@ -547,7 +559,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
                 Desktop desktop = Desktop.getDesktop();
-                if (mouseEvent.getComponent().getName().equalsIgnoreCase("Support")) {
+                if (mouseEvent.getComponent().getName().equalsIgnoreCase("Contact Us")) {
                     String mailTo = "admin@evicuna.com";
                     URI uriMailTo;
                     try {
@@ -557,6 +569,12 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
                         } else {
                             desktop.mail();
                         }
+                    } catch (IOException | URISyntaxException e) {
+                        e.printStackTrace();
+                    }
+                } else if (mouseEvent.getComponent().getName().equalsIgnoreCase("Support")) {
+                    try {
+                        desktop.browse(new URI("http://www.oulton.org/vicuna/evp.nsf/Contacts?ReadForm"));
                     } catch (IOException | URISyntaxException e) {
                         e.printStackTrace();
                     }
@@ -1815,6 +1833,11 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
 
 
     public void SaveProject(int id) {
+        if (btnGeneralSave.isVisible()) {
+            JOptionPane.showMessageDialog(this, "General preferences need to be saved before projects.", "Project Save Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         ArrayList<Object> lists;
         //
         switch (id) {
