@@ -12,6 +12,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Filter;
 import java.util.logging.LogRecord;
@@ -48,6 +49,7 @@ public class Monitor implements NativeKeyListener, NativeMouseInputListener {
             GlobalScreen.registerNativeHook();
             GlobalScreen.addNativeKeyListener(this);
             GlobalScreen.addNativeMouseListener(this);
+            GlobalScreen.addNativeMouseMotionListener(this);
             Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
 
             // This is to stop libraries own logs
@@ -71,25 +73,19 @@ public class Monitor implements NativeKeyListener, NativeMouseInputListener {
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
-        // TODO: handle if delete was hit with text highlighted
         int keyCode = nativeKeyEvent.getKeyCode();
 
-        if (keyCode == NativeKeyEvent.VC_DELETE) {
-            // send ctrl-c command
-//            NativeKeyEvent event = new NativeKeyEvent(
-//                    NativeKeyEvent.NATIVE_KEY_PRESSED,
-//                    System.currentTimeMillis(),
-//                    34,		// Modifiers
-//                    67,		// Raw Code
-//                    NativeKeyEvent.VC_C,
-//                    'C',
-//                    NativeKeyEvent.KEY_LOCATION_STANDARD);
-//            GlobalScreen.postNativeEvent(event);
+        if (nativeKeyEvent.getModifiers() > 250) {
+            // we don't need to do anything for mouse movement
+            return;
+        }
 
-            // get Clipboard Contents
-//            String contents = getClipboardContents();
-            // somehow find all characters in keyList
-            // count words and subtract
+        if (textHighlighted) {
+            String contents = getClipboardContents();
+            List<Integer> stringAsIntList = convertStringToIntList(contents);
+            countAndRemoveFromKeyList(stringAsIntList);
+
+            textHighlighted = false;
         }
 
         if ((previousKeyStroke == NativeKeyEvent.VC_CONTROL_L || previousKeyStroke == NativeKeyEvent.VC_CONTROL_R) && keyCode == NativeKeyEvent.VC_V) {
@@ -139,6 +135,55 @@ public class Monitor implements NativeKeyListener, NativeMouseInputListener {
         }
 
         previousKeyStroke = keyCode;
+    }
+
+    private void countAndRemoveFromKeyList(List<Integer> stringAsIntList) {
+        int startIndex = Collections.indexOfSubList(keyList, stringAsIntList);
+        int offset = 0;
+        for (int i = startIndex; i < startIndex + stringAsIntList.size(); i++) {
+            keyList.remove(i - offset);
+            offset++;
+        }
+
+        int positionOfLastCount = 0;
+        int countToRemove = 0;
+        for (int i = 0; i < stringAsIntList.size(); i++) {
+            int keyInt = stringAsIntList.get(i);
+            if (keyInt == NativeKeyEvent.VC_SPACE || keyInt == NativeKeyEvent.VC_ENTER || keyInt == NativeKeyEvent.VC_TAB) {
+                countToRemove++;
+                positionOfLastCount = i;
+            }
+        }
+
+        if (positionOfLastCount < stringAsIntList.size()) {
+            countToRemove++;
+        }
+
+        tracker.updateProjectCount(-countToRemove);
+    }
+
+    private List<Integer> convertStringToIntList(String contents) {
+        List<Integer> keyStrokeList = new ArrayList<>();
+        for (int i = 0; i <= contents.length() - 1; i++) {
+            int keyInt = KeyConverter.getKeyInt(String.valueOf(contents.charAt(i)));
+            if (keyInt > 0) {
+                keyStrokeList.add(keyInt);
+            }
+        }
+
+        return keyStrokeList;
+    }
+
+    private void sendCopyCommand() {
+        NativeKeyEvent event = new NativeKeyEvent(
+                NativeKeyEvent.NATIVE_KEY_PRESSED,
+                System.currentTimeMillis(),
+                34,		// Modifiers
+                67,		// Raw Code
+                NativeKeyEvent.VC_C,
+                'C',
+                NativeKeyEvent.KEY_LOCATION_STANDARD);
+        GlobalScreen.postNativeEvent(event);
     }
 
     public int countWordsAndLogKeys(String str) {
@@ -209,6 +254,15 @@ public class Monitor implements NativeKeyListener, NativeMouseInputListener {
 
     @Override
     public void nativeMouseDragged(NativeMouseEvent nativeMouseEvent) {
+        sendCopyCommand();
+
+//        try {
+//            Thread.sleep(250);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+        System.out.println(getClipboardContents());
         textHighlighted = true;
     }
 }
