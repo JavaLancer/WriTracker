@@ -198,7 +198,9 @@ public class Start implements ActionListener, MenuListener {
                 Calendar expirationDate = Calendar.getInstance();
                 expirationDate.setTime(general.getFirstSaveDate());
                 expirationDate.add(Calendar.WEEK_OF_YEAR, 4);
-                JOptionPane.showMessageDialog(null, "You have " + getDateDiff(Calendar.getInstance().getTime(), expirationDate.getTime(), TimeUnit.DAYS) + " days in your free trial.", "WriTracker Trial", JOptionPane.WARNING_MESSAGE);
+                JDialog dialog = new JDialog();
+                dialog.setAlwaysOnTop(true);
+                JOptionPane.showMessageDialog(dialog, "You have " + getDateDiff(Calendar.getInstance().getTime(), expirationDate.getTime(), TimeUnit.DAYS) + " days in your free trial.", "WriTracker Trial", JOptionPane.WARNING_MESSAGE);
             }
             demo.showActivate(true);
         }
@@ -250,8 +252,8 @@ public class Start implements ActionListener, MenuListener {
         }
         if (command.equals("1")) {
             mytracker.selectedProject = 1;
-            mytracker.getKeyMonitor().stopListening();
-            mytracker.getKeyMonitor().startListening();
+            mytracker.getMonitor().stopListening();
+            mytracker.getMonitor().startListening();
             ActiveTracker.disposeWordCount();
             mytracker.DisplayWordCount();
 //            if (timer != null)
@@ -270,8 +272,8 @@ public class Start implements ActionListener, MenuListener {
             mytracker.selectedProject = 2;
             ActiveTracker.disposeWordCount();
             mytracker.DisplayWordCount();
-            mytracker.getKeyMonitor().stopListening();
-            mytracker.getKeyMonitor().startListening();
+            mytracker.getMonitor().stopListening();
+            mytracker.getMonitor().startListening();
 //            if (timer != null)
 //                timer.cancel();
 //            timer = new Timer();
@@ -287,8 +289,8 @@ public class Start implements ActionListener, MenuListener {
         }
         if (command.equals("3")) {
             mytracker.selectedProject = 3;
-            mytracker.getKeyMonitor().stopListening();
-            mytracker.getKeyMonitor().startListening();
+            mytracker.getMonitor().stopListening();
+            mytracker.getMonitor().startListening();
             ActiveTracker.disposeWordCount();
             mytracker.DisplayWordCount();
 //            if (timer != null)
@@ -309,8 +311,8 @@ public class Start implements ActionListener, MenuListener {
             mytracker.selectedProject = 4;
             ActiveTracker.disposeWordCount();
             mytracker.DisplayWordCount();
-            mytracker.getKeyMonitor().stopListening();
-            mytracker.getKeyMonitor().startListening();
+            mytracker.getMonitor().stopListening();
+            mytracker.getMonitor().startListening();
 //            if (timer != null)
 //                timer.cancel();
 //            timer = new Timer();
@@ -326,8 +328,8 @@ public class Start implements ActionListener, MenuListener {
         }
         if (command.equals("5") && general.isActivated()) {
             mytracker.selectedProject = 5;
-            mytracker.getKeyMonitor().stopListening();
-            mytracker.getKeyMonitor().startListening();
+            mytracker.getMonitor().stopListening();
+            mytracker.getMonitor().startListening();
             ActiveTracker.disposeWordCount();
             mytracker.DisplayWordCount();
 //            if (timer != null)
@@ -380,7 +382,7 @@ public class Start implements ActionListener, MenuListener {
             ActiveTracker.disposeWordCount();
             mytracker.selectedProject = 0;
             ActiveTracker.appStatus = false;
-            mytracker.getKeyMonitor().stopListening();
+            mytracker.getMonitor().stopListening();
 //            if (timer != null)
 //                timer.cancel();
         }

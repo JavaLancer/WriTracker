@@ -5,6 +5,8 @@ import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
+import org.jnativehook.mouse.NativeMouseEvent;
+import org.jnativehook.mouse.NativeMouseInputListener;
 
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -18,7 +20,7 @@ import java.util.logging.Logger;
 /**
  * User: cbates
  */
-public class KeyMonitor implements NativeKeyListener{
+public class Monitor implements NativeKeyListener, NativeMouseInputListener {
 
     public static final String SPACE_KEY_TEXT = NativeKeyEvent.getKeyText(NativeKeyEvent.VC_SPACE);
     public static final String TAB_KEY_TEXT = NativeKeyEvent.getKeyText(NativeKeyEvent.VC_TAB);
@@ -27,8 +29,9 @@ public class KeyMonitor implements NativeKeyListener{
     private List<Integer> keyList = new ArrayList<>();
     private ActiveTracker tracker;
     private int previousKeyStroke;
+    private boolean textHighlighted;
 
-    public KeyMonitor(ActiveTracker tracker) {
+    public Monitor(ActiveTracker tracker) {
         this.tracker = tracker;
     }
 
@@ -44,6 +47,7 @@ public class KeyMonitor implements NativeKeyListener{
         try {
             GlobalScreen.registerNativeHook();
             GlobalScreen.addNativeKeyListener(this);
+            GlobalScreen.addNativeMouseListener(this);
             Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
 
             // This is to stop libraries own logs
@@ -68,10 +72,32 @@ public class KeyMonitor implements NativeKeyListener{
     @Override
     public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
         // TODO: handle if delete was hit with text highlighted
-
         int keyCode = nativeKeyEvent.getKeyCode();
+
+        if (keyCode == NativeKeyEvent.VC_DELETE) {
+            // send ctrl-c command
+//            NativeKeyEvent event = new NativeKeyEvent(
+//                    NativeKeyEvent.NATIVE_KEY_PRESSED,
+//                    System.currentTimeMillis(),
+//                    34,		// Modifiers
+//                    67,		// Raw Code
+//                    NativeKeyEvent.VC_C,
+//                    'C',
+//                    NativeKeyEvent.KEY_LOCATION_STANDARD);
+//            GlobalScreen.postNativeEvent(event);
+
+            // get Clipboard Contents
+//            String contents = getClipboardContents();
+            // somehow find all characters in keyList
+            // count words and subtract
+        }
+
         if ((previousKeyStroke == NativeKeyEvent.VC_CONTROL_L || previousKeyStroke == NativeKeyEvent.VC_CONTROL_R) && keyCode == NativeKeyEvent.VC_V) {
             tracker.updateProjectCount(countWordsAndLogKeys(getClipboardContents()));
+        }
+
+        if (previousKeyStroke == NativeKeyEvent.VC_CONTROL_L && keyCode == NativeKeyEvent.VC_C) {
+            int i = 1;
         }
 
         String previousKeyText;
@@ -159,5 +185,30 @@ public class KeyMonitor implements NativeKeyListener{
     @Override
     public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
         // Unneeded method
+    }
+
+    @Override
+    public void nativeMouseClicked(NativeMouseEvent nativeMouseEvent) {
+        // Unneeded method
+    }
+
+    @Override
+    public void nativeMousePressed(NativeMouseEvent nativeMouseEvent) {
+        // Unneeded method
+    }
+
+    @Override
+    public void nativeMouseReleased(NativeMouseEvent nativeMouseEvent) {
+        // Unneeded method
+    }
+
+    @Override
+    public void nativeMouseMoved(NativeMouseEvent nativeMouseEvent) {
+        // Unneeded method
+    }
+
+    @Override
+    public void nativeMouseDragged(NativeMouseEvent nativeMouseEvent) {
+        textHighlighted = true;
     }
 }
