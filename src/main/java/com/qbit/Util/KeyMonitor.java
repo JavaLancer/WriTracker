@@ -6,6 +6,9 @@ import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Filter;
@@ -65,7 +68,11 @@ public class KeyMonitor implements NativeKeyListener{
     @Override
     public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
         // TODO: handle if delete was hit with text highlighted
-        // TODO: handle if text was pasted in
+
+        int keyCode = nativeKeyEvent.getKeyCode();
+        if ((previousKeyStroke == NativeKeyEvent.VC_CONTROL_L || previousKeyStroke == NativeKeyEvent.VC_CONTROL_R) && keyCode == NativeKeyEvent.VC_V) {
+            tracker.updateProjectCount(countWordsAndLogKeys(getClipboardContents()));
+        }
 
         String previousKeyText;
         if (!keyList.isEmpty()) {
@@ -74,15 +81,15 @@ public class KeyMonitor implements NativeKeyListener{
             previousKeyText = "";
         }
 
-        if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_BACKSPACE && previousKeyStroke != NativeKeyEvent.VC_BACKSPACE) {
+        if (keyCode == NativeKeyEvent.VC_BACKSPACE && previousKeyStroke != NativeKeyEvent.VC_BACKSPACE) {
             if (previousKeyText.equals(SPACE_KEY_TEXT) || previousKeyText.equals(ENTER_KEY_TEXT) || previousKeyText.equals(TAB_KEY_TEXT)) {
                 keyList.remove(keyList.size() - 1);
-                previousKeyStroke = nativeKeyEvent.getKeyCode();
+                previousKeyStroke = keyCode;
                 return;
             }
         }
 
-        if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_BACKSPACE) {
+        if (keyCode == NativeKeyEvent.VC_BACKSPACE) {
             if (previousKeyText.equals(SPACE_KEY_TEXT) || previousKeyText.equals(TAB_KEY_TEXT) || previousKeyText.equals(ENTER_KEY_TEXT)) {
                 String previousToPreviousText = NativeKeyEvent.getKeyText(keyList.get(keyList.size() - 2));
                 // Check it's not special case where there were multiple count trigger keys in a row
@@ -96,16 +103,52 @@ public class KeyMonitor implements NativeKeyListener{
                 tracker.updateProjectCount(-99);
             }
         } else {
-            keyList.add(nativeKeyEvent.getKeyCode());
+            keyList.add(keyCode);
         }
 
-        if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_TAB || nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_ENTER || nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_SPACE) {
+        if (keyCode == NativeKeyEvent.VC_TAB || keyCode == NativeKeyEvent.VC_ENTER || keyCode == NativeKeyEvent.VC_SPACE) {
             if (!previousKeyText.equals(ENTER_KEY_TEXT) && !previousKeyText.equals(TAB_KEY_TEXT) && !previousKeyText.equals(SPACE_KEY_TEXT)) {
                 tracker.updateProjectCount(1);
             }
         }
 
-        previousKeyStroke = nativeKeyEvent.getKeyCode();
+        previousKeyStroke = keyCode;
+    }
+
+    public int countWordsAndLogKeys(String str) {
+        int wordCount = 0;
+        int positionOfLastCount = 0;
+        List<Integer> keyStrokeList = new ArrayList<>();
+        for (int i = 0; i <= str.length() - 1; i++) {
+            keyStrokeList.add(KeyConverter.getKeyInt(String.valueOf(str.charAt(i))));
+            if (str.charAt(i) == ' ' && str.charAt(i-1) != ' ') {
+                wordCount++;
+                positionOfLastCount = i;
+            }
+        }
+
+        keyList.addAll(keyStrokeList);
+        if (positionOfLastCount != str.length()) {
+            wordCount++;
+        }
+
+        return wordCount;
+    }
+
+	public String getClipboardContents() {
+	    String result = "";
+	    Clipboard clipboard = tracker.getToolkit().getSystemClipboard();
+	    Transferable contents = clipboard.getContents(null);
+	    boolean hasTransferableText = (contents != null) && contents.isDataFlavorSupported(DataFlavor.stringFlavor);
+	    if (hasTransferableText) {
+	      try {
+	        result = (String)contents.getTransferData(DataFlavor.stringFlavor);
+	      }
+	      catch (Exception ex){
+	        System.out.println(ex.getMessage());
+	      }
+	    }
+	    return result;
     }
 
     @Override
