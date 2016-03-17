@@ -47,6 +47,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
     StandardButton btnGeneralSave = new StandardButton("    Save    ");
 //    StandardButton btnProjectEdit;
     StandardButton btnProjectSave;
+    StandardButton btnProjectClear;
 
     JLabel lblStatus;
     JRadioButton radio_total;
@@ -1409,6 +1410,16 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         btnProjectSave.addActionListener(this);
         btnProjectSave.setVisible(false);
         pnlBottom.add(btnProjectSave);
+
+        btnProjectClear = new StandardButton("    Clear    ");
+        btnProjectClear.setBackground(Color.gray);
+        btnProjectClear.setFont(font);
+        btnProjectClear.setForeground(Color.black);
+        btnProjectClear.setActionCommand(projID + "C");
+        btnProjectClear.setName("btnProjectClear" + projID);
+        btnProjectClear.addActionListener(this);
+        btnProjectClear.setVisible(true);
+        pnlBottom.add(btnProjectClear);
         //pnlBottom.setBackground(bgColor);
 
 //        StandardButton btnProjectEdit = new StandardButton("    Edit    ");
@@ -1436,26 +1447,31 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         switch (projID) {
             case 1:
                 proj1Lists.add(btnProjectSave);
+                proj1Lists.add(btnProjectClear);
 //                proj1Lists.add(btnProjectEdit);
 //                EnableProjectFields(proj1Lists, false);
                 break;
             case 2:
                 proj2Lists.add(btnProjectSave);
+                proj2Lists.add(btnProjectClear);
 //                proj2Lists.add(btnProjectEdit);
 //                EnableProjectFields(proj2Lists, false);
                 break;
             case 3:
                 proj3Lists.add(btnProjectSave);
+                proj3Lists.add(btnProjectClear);
 //                proj3Lists.add(btnProjectEdit);
 //                EnableProjectFields(proj3Lists, false);
                 break;
             case 4:
                 proj4Lists.add(btnProjectSave);
+                proj4Lists.add(btnProjectClear);
 //                proj4Lists.add(btnProjectEdit);
 //                EnableProjectFields(proj4Lists, false);
                 break;
             case 5:
                 proj5Lists.add(btnProjectSave);
+                proj5Lists.add(btnProjectClear);
 //                proj5Lists.add(btnProjectEdit);
 //                EnableProjectFields(proj5Lists, false);
                 break;
@@ -1778,30 +1794,57 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
 
     //button clicked
     public void actionPerformed(ActionEvent ae) {
-        if (ae.getActionCommand().equals("GS"))
+        if (ae.getActionCommand().equals("GS")) {
             SaveGeneralTab();
-        if (ae.getActionCommand().equals("1S"))
+        }
+        if (ae.getActionCommand().equals("1S")) {
             SaveProject(1);
-        if (ae.getActionCommand().equals("2S"))
+        }
+        if (ae.getActionCommand().equals("2S")) {
             SaveProject(2);
-        if (ae.getActionCommand().equals("3S"))
+        }
+        if (ae.getActionCommand().equals("3S")) {
             SaveProject(3);
-        //for proj 4 and 5
-        if (ae.getActionCommand().equals("4S"))
+        }
+        if (ae.getActionCommand().equals("4S")) {
             SaveProject(4);
-        if (ae.getActionCommand().equals("5S"))
+        }
+        if (ae.getActionCommand().equals("5S")) {
             SaveProject(5);
-        if (ae.getActionCommand().equals("1E"))
+        }
+
+        if (ae.getActionCommand().equals("1E")) {
             EditProject(1);
-        if (ae.getActionCommand().equals("2E"))
+        }
+        if (ae.getActionCommand().equals("2E")) {
             EditProject(2);
-        if (ae.getActionCommand().equals("3E"))
+        }
+        if (ae.getActionCommand().equals("3E")) {
             EditProject(3);
-        //for proj 4 and 5
-        if (ae.getActionCommand().equals("4E"))
+        }
+        if (ae.getActionCommand().equals("4E")) {
             EditProject(4);
-        if (ae.getActionCommand().equals("5E"))
+        }
+        if (ae.getActionCommand().equals("5E")) {
             EditProject(5);
+        }
+
+        if (ae.getActionCommand().equals("1C")) {
+            clearProject(1);
+        }
+        if (ae.getActionCommand().equals("2C")) {
+            clearProject(2);
+        }
+        if (ae.getActionCommand().equals("3C")) {
+            clearProject(3);
+        }
+        if (ae.getActionCommand().equals("4C")) {
+            clearProject(4);
+        }
+        if (ae.getActionCommand().equals("5C")) {
+            clearProject(5);
+        }
+
         if (ae.getActionCommand().equals("AC")) {
             ActivateDialog dlgActivate = new ActivateDialog(this);
             dlgActivate.setLocationRelativeTo(this);
@@ -1847,34 +1890,23 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
     }
 
     public void EditProject(int id) {
-        ArrayList<Object> lists;
-        switch (id) {
-            case 1:
-                lists = proj1Lists;
-                break;
-            case 2:
-                lists = proj2Lists;
-                break;
-            case 3:
-                lists = proj3Lists;
-                break;
-            case 4:
-                lists = proj4Lists;
-                break;
-            case 5:
-                lists = proj5Lists;
-                break;
-            default:
-                lists = new ArrayList<>();
-        }
+        ArrayList<Object> lists = getProjectFields(id);
 
         JDatePickerImpl projPicker = null;
+        JTextField txtWordGoal = null;
         for (Object obj : lists) {
             if (!(obj instanceof StandardButton)) {
                 if (obj instanceof JDatePickerImpl) {
                     JDatePickerImpl picker = (JDatePickerImpl) obj;
                     if (picker.getName().equals("Proj_Deadline")) {
                         projPicker = picker;
+                    }
+                }
+
+                if (obj instanceof JTextField) {
+                    JTextField wordGoal = (JTextField) obj;
+                    if (wordGoal.getName().equals("Proj_wordGoal")) {
+                        txtWordGoal = wordGoal;
                     }
                 }
                 continue;
@@ -1902,18 +1934,20 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             }
         }
 
+        if (txtWordGoal != null) {
+            if (((JComboBox) lists.get(2)).getSelectedIndex() == 6) {
+                lbl_wordstocomplete[id - 1].setText("<html><b>Pages Left to Complete: <font color=\"blue\">" + txtWordGoal.getText() + "</font></html>");
+//                lbl_milestonecount[id - 1].setText("<html><b>Milestone Page Count: <font color=\"blue\">" + txtWordGoal.getText() + "</font></html>");
+            } else {
+                lbl_wordstocomplete[id - 1].setText("<html><b>Words Left to Complete: <font color=\"blue\">" + txtWordGoal.getText() + "</font></html>");
+//                lbl_milestonecount[id - 1].setText("<html><b>Milestone Word Count: <font color=\"blue\">" + txtWordGoal.getText() + "</font></html>");
+            }
+        }
 //        EnableProjectFields(lists, true);
     }
 
-
-    public void SaveProject(int id) {
-//        if (btnGeneralSave.isVisible()) {
-//            JOptionPane.showMessageDialog(this, "General preferences need to be saved before projects.", "Project Save Error", JOptionPane.ERROR_MESSAGE);
-//            return;
-//        }
-
+    private ArrayList<Object> getProjectFields(int id) {
         ArrayList<Object> lists;
-        //
         switch (id) {
             case 1:
                 lists = proj1Lists;
@@ -1933,6 +1967,76 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             default:
                 lists = new ArrayList<>();
         }
+        return lists;
+    }
+
+    private void clearProject(int projectId) {
+        ArrayList<Object> projectFields = getProjectFields(projectId);
+        projectId--;
+
+        // Project Title
+        ((JTextField) projectFields.get(0)).setText("Project " + (projectId + 1));
+
+
+        // Deadline
+        Calendar cal = Calendar.getInstance();
+        ((JDatePickerImpl) projectFields.get(1)).getModel().setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE));
+
+        String name = getNameFromGeneral();
+        // Project Type
+        ((JComboBox) projectFields.get(2)).setSelectedIndex(0);
+        // Word Goal
+        ((JTextField) projectFields.get(3)).setText("");
+        // Interval
+        ((JComboBox) projectFields.get(4)).setSelectedIndex(0);
+        // Post on Social Media
+        ((JCheckBox) projectFields.get(5)).setSelected(false);
+        // Reward 1000
+        ((JTextField) projectFields.get(6)).setText("\"Congratulations! " + name + " hit 1,000 words!\"");
+        // Reward Milestone
+        ((JTextField) projectFields.get(7)).setText(name + " made a milestone writing goal! Kudos are appreciated!\"");
+        // Reward 2000
+        ((JTextField) projectFields.get(8)).setText("Hooray! " + name + " wrote 2,000 words today!");
+        // Penalty
+        ((JTextField) projectFields.get(9)).setText(name + " missed a milestone writing goal! Encouragement is needed!");
+        // Reward 5000
+        ((JTextField) projectFields.get(10)).setText(name + " is soaring! 5,000 words written!");
+        // Avg Words Per Page
+        ((JTextField) projectFields.get(11)).setText("255");
+        // Reward 10000
+        ((JTextField) projectFields.get(12)).setText(name + " is cruising. 10,000 words written today!");
+        // Reward Completion
+        ((JTextField) projectFields.get(13)).setText("Take " + txt_ProjName[projectId].getText() + " and start editing! Well done!");
+
+        lbl_daysLeft[projectId].setText("<html><b> 0 Days Remaining</html>");
+        lbl_totalwords[projectId].setText("<html><b>Current Total Words: <font color=\"blue\">0</font></html>");
+        lbl_milestonecount[projectId].setText("<html><b>Milestone Word Count: <font color=\"blue\">0</font></html>");
+        lbl_wordstocomplete[projectId].setText("<html><b>Words Left to Complete: <font color=\"blue\">0</font></html>");
+
+        lbl_scriptPage[projectId].setVisible(false);
+        txt_scriptPage[projectId].setVisible(false);
+        lbl_1000[projectId].setText("<html><b>1,000 Words <br>Reward:</html>");
+        lbl_2000[projectId].setText("<html><b>2,000 Words <br>Reward:</html>");
+        lbl_5000[projectId].setText("<html><b>5,000 Words <br>Reward:</html>");
+        lbl_10000[projectId].setText("<html><b>10,000 Words <br>Reward:</html>");
+        lbl_wordstocomplete[projectId].setText("<html><b>Words Left to Complete:  <font color=\"blue\">0</font></html>");
+        lbl_totalwords[projectId].setText("<html><b>Current Total Words:  <font color=\"blue\">0</font></html>");
+        lbl_milestonecount[projectId].setText("<html><b>Milestone Word Count:  <font color=\"blue\">0</font></html>");
+        lbl_wordgoal[projectId].setText("<html><b>Word Goal:</html>");
+        txt_1000[projectId].setText(txt_1000[projectId].getText().replace("5 pages", "1,000 words"));
+        txt_2000[projectId].setText(txt_2000[projectId].getText().replace("10 pages", "2,000 words"));
+        txt_5000[projectId].setText(txt_5000[projectId].getText().replace("25 pages", "5,000 words"));
+        txt_10000[projectId].setText(txt_10000[projectId].getText().replace("50 pages", "10,000 words"));
+    }
+
+
+    public void SaveProject(int id) {
+//        if (btnGeneralSave.isVisible()) {
+//            JOptionPane.showMessageDialog(this, "General preferences need to be saved before projects.", "Project Save Error", JOptionPane.ERROR_MESSAGE);
+//            return;
+//        }
+
+        ArrayList<Object> lists = getProjectFields(id);
 
         Project proj = new Project();
         String projTitle = ((JTextField) lists.get(0)).getText().trim();
