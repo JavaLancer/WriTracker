@@ -1964,7 +1964,9 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         proj.setReward2000(((JTextField) lists.get(8)).getText().trim());
         proj.setPenalty(((JTextField) lists.get(9)).getText().trim());
         proj.setReward5000(((JTextField) lists.get(10)).getText().trim());
-        proj.setAvgWordsPerPage(Integer.parseInt(((JTextField) lists.get(11)).getText().trim()));
+        if (proj.getProjectType() == 6) {
+            proj.setAvgWordsPerPage(Integer.parseInt(((JTextField) lists.get(11)).getText().trim()));
+        }
         proj.setReward10000(((JTextField) lists.get(12)).getText().trim());
         proj.setRewardCompletion(((JTextField) lists.get(13)).getText().trim());
 

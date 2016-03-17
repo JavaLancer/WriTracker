@@ -8,9 +8,11 @@ import org.jnativehook.keyboard.NativeKeyListener;
 import org.jnativehook.mouse.NativeMouseEvent;
 import org.jnativehook.mouse.NativeMouseInputListener;
 
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -83,7 +85,7 @@ public class Monitor implements NativeKeyListener, NativeMouseInputListener {
         if (textHighlighted) {
             String contents = getClipboardContents();
             List<Integer> stringAsIntList = convertStringToIntList(contents);
-//            countAndRemoveFromKeyList(stringAsIntList);
+            countAndRemoveFromKeyList(stringAsIntList);
 
             textHighlighted = false;
         }
@@ -177,15 +179,27 @@ public class Monitor implements NativeKeyListener, NativeMouseInputListener {
     }
 
     private void sendCopyCommand() {
-        NativeKeyEvent event = new NativeKeyEvent(
-                NativeKeyEvent.NATIVE_KEY_PRESSED,
-                System.currentTimeMillis(),
-                34,		// Modifiers
-                67,		// Raw Code
-                NativeKeyEvent.VC_C,
-                'C',
-                NativeKeyEvent.KEY_LOCATION_STANDARD);
-        GlobalScreen.postNativeEvent(event);
+//        NativeKeyEvent event = new NativeKeyEvent(
+//                NativeKeyEvent.NATIVE_KEY_PRESSED,
+//                System.currentTimeMillis(),
+//                34,		// Modifiers
+//                67,		// Raw Code
+//                NativeKeyEvent.VC_C,
+//                'C',
+//                NativeKeyEvent.KEY_LOCATION_STANDARD);
+//        GlobalScreen.postNativeEvent(event);
+
+        Robot robot;
+        try {
+            robot = new Robot();
+            robot.keyPress(KeyEvent.VK_CONTROL);
+            robot.keyPress(KeyEvent.VK_C);
+            Thread.sleep(150);
+            robot.keyRelease(KeyEvent.VK_C);
+            robot.keyRelease(KeyEvent.VK_CONTROL);
+        } catch (AWTException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public int countWordsAndLogKeys(String str) {
