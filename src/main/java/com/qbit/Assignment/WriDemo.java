@@ -76,17 +76,17 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             }
         }
 
-        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent windowEvent) {
-                if (btnGeneralSave.isVisible() || btnProjectSave.isVisible()) {
-                    JOptionPane.showMessageDialog(windowEvent.getWindow(), "Preferences and projects need to be saved before exiting.", "Save Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    windowEvent.getWindow().dispose();
-                }
-            }
-        });
+//        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+//        addWindowListener(new WindowAdapter() {
+//            @Override
+//            public void windowClosing(WindowEvent windowEvent) {
+//                if (btnGeneralSave.isVisible() || btnProjectSave.isVisible()) {
+//                    JOptionPane.showMessageDialog(windowEvent.getWindow(), "Preferences and projects need to be saved before exiting.", "Save Error", JOptionPane.ERROR_MESSAGE);
+//                } else {
+//                    windowEvent.getWindow().dispose();
+//                }
+//            }
+//        });
     }
 
     public void showActivate(boolean showActivate) {
@@ -595,6 +595,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
     JTextField txt_projGoal;
     JComboBox cmb_intervals;
     JCheckBox isPost;
+    JTextField txt_scriptPage[] = new JTextField[5];
     JTextField txt_1000[] = new JTextField[5];
     JTextField txt_Milestone_reward[] = new JTextField[5];
     JTextField txt_2000[] = new JTextField[5];
@@ -619,6 +620,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
     JLabel lbl_wordstocomplete[] = new JLabel[5];
     JLabel lbl_totalwords[] = new JLabel[5];
     JLabel lbl_wordgoal[] = new JLabel[5];
+    JLabel lbl_scriptPage[] = new JLabel[5];
     JLabel lbl_milestonecount[] = new JLabel[5];
     JLabel lbl_daysLeft[] = new JLabel[5];
 
@@ -752,6 +754,12 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             default:
                 break;
         }
+        datePicker.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fieldChanged();
+            }
+        });
 
 
         JLabel lbl_bl = new JLabel("");
@@ -1250,6 +1258,52 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
                 break;
         }
 
+        lbl_scriptPage[projID - 1] = new JLabel("<html><b>Average Number Of Words/Page:</html>");
+        lbl_scriptPage[projID - 1].setFont(font);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 7;
+        panel.add(lbl_scriptPage[projID - 1], c);
+//        lbl_scriptPage[projID - 1].setVisible(false);
+
+        txt_scriptPage[projID - 1] = new JTextField();
+        txt_scriptPage[projID - 1].setFont(font);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1;
+        c.weighty = 2;
+        c.gridx = 3;
+        c.gridy = 7;
+        panel.add(txt_scriptPage[projID - 1], c);
+        txt_scriptPage[projID - 1].setName("Proj_scriptPage");
+//        txt_scriptPage.setVisible(false);
+        if (proj != null && proj.getProjectType() == 7) {
+//            lbl_scriptPage[projID - 1].setVisible(false);
+//            txt_scriptPage.setVisible(true);
+            txt_scriptPage[projID - 1].setText("255");
+        }
+        addTxtFieldListener(txt_scriptPage[projID - 1]);
+
+        switch (projID) {
+            case 1:
+                proj1Lists.add(txt_scriptPage[projID - 1]);
+                break;
+            case 2:
+                proj2Lists.add(txt_scriptPage[projID - 1]);
+                break;
+            case 3:
+                proj3Lists.add(txt_scriptPage[projID - 1]);
+                break;
+            case 4:
+                proj4Lists.add(txt_scriptPage[projID - 1]);
+                break;
+            case 5:
+                proj5Lists.add(txt_scriptPage[projID - 1]);
+                break;
+
+            default:
+                break;
+        }
+
         lbl_10000[projID - 1] = new JLabel("<html><b>10,000 Words <br>Reward:</html>");
         lbl_10000[projID - 1].setFont(font);
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -1485,15 +1539,14 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
     }
 
     private void fieldChanged() {
-        if (!btnGeneralSave.isVisible()) {
-            btnGeneralSave.setVisible(true);
+        if (tabbedPane.getSelectedIndex() == 0) {
+            if (!btnGeneralSave.isVisible()) {
+                btnGeneralSave.setVisible(true);
+            }
+        } else {
+            EditProject(tabbedPane.getSelectedIndex());
+//            refreshFields(txt_Name.getText().trim(), cmb_ProjType.getSelectedIndex() == 6 ? "SCRIPT" : "notScript", tabbedPane.getSelectedIndex());
         }
-
-        EditProject(1);
-        EditProject(2);
-        EditProject(3);
-        EditProject(4);
-        EditProject(5);
     }
 
     static boolean proj1SessionStart = true;
@@ -1815,8 +1868,15 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
                 lists = new ArrayList<>();
         }
 
+        JDatePickerImpl projPicker = null;
         for (Object obj : lists) {
             if (!(obj instanceof StandardButton)) {
+                if (obj instanceof JDatePickerImpl) {
+                    JDatePickerImpl picker = (JDatePickerImpl) obj;
+                    if (picker.getName().equals("Proj_Deadline")) {
+                        projPicker = picker;
+                    }
+                }
                 continue;
             }
             StandardButton btn = (StandardButton) obj;
@@ -1828,15 +1888,29 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             }
         }
 
+        if (projPicker != null) {
+            Object date = projPicker.getModel().getValue();
+            if (date != null) {
+                long timeRemaining = TimeUnit.DAYS.convert((((Date) date).getTime() - System.currentTimeMillis()), TimeUnit.MILLISECONDS);
+                if (timeRemaining < 14) {
+                    lbl_daysLeft[id - 1].setText("<html><b><font color=\"red\">" + timeRemaining + " Days Remaining!</font></html>");
+                } else {
+                    lbl_daysLeft[id - 1].setText("<html><b>" + timeRemaining + " Days Remaining</html>");
+                }
+            } else {
+                lbl_daysLeft[id - 1].setText("<html><b> 0 Days Remaining</html>");
+            }
+        }
+
 //        EnableProjectFields(lists, true);
     }
 
 
     public void SaveProject(int id) {
-        if (btnGeneralSave.isVisible()) {
-            JOptionPane.showMessageDialog(this, "General preferences need to be saved before projects.", "Project Save Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+//        if (btnGeneralSave.isVisible()) {
+//            JOptionPane.showMessageDialog(this, "General preferences need to be saved before projects.", "Project Save Error", JOptionPane.ERROR_MESSAGE);
+//            return;
+//        }
 
         ArrayList<Object> lists;
         //
@@ -1890,8 +1964,9 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
         proj.setReward2000(((JTextField) lists.get(8)).getText().trim());
         proj.setPenalty(((JTextField) lists.get(9)).getText().trim());
         proj.setReward5000(((JTextField) lists.get(10)).getText().trim());
-        proj.setReward10000(((JTextField) lists.get(11)).getText().trim());
-        proj.setRewardCompletion(((JTextField) lists.get(12)).getText().trim());
+        proj.setAvgWordsPerPage(Integer.parseInt(((JTextField) lists.get(11)).getText().trim()));
+        proj.setReward10000(((JTextField) lists.get(12)).getText().trim());
+        proj.setRewardCompletion(((JTextField) lists.get(13)).getText().trim());
 
         Project old = new Project();
         switch (id) {
@@ -1949,6 +2024,7 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             }
         }
 
+        refreshFields(txt_Name.getText().trim(), proj.getProjectType() == 6 ? "SCRIPT" : "notScript", id);
     }
 
     public void SaveGeneralTab() {
@@ -2088,6 +2164,8 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
 
         String oldName = getNameFromGeneral();
         if (selectedItem.equalsIgnoreCase("SCRIPT")) {
+            lbl_scriptPage[index].setVisible(true);
+            txt_scriptPage[index].setVisible(true);
             lbl_1000[index].setText("<html><b>5 Pages <br>Reward:</html>");
             lbl_2000[index].setText("<html><b>10 Pages <br>Reward:</html>");
             lbl_5000[index].setText("<html><b>25 Pages <br>Reward:</html>");
@@ -2096,7 +2174,13 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
                 lbl_wordstocomplete[index].setText("<html><b>Pages Left to Complete:  <font color=\"blue\">0</font></html>");
                 lbl_totalwords[index].setText("<html><b>Current Total Pages:  <font color=\"blue\">0</font></html>");
                 lbl_milestonecount[index].setText("<html><b>Milestone Page Count:  <font color=\"blue\">0</font></html>");
+                txt_scriptPage[index].setText("255");
             } else {
+                if (proj.getAvgWordsPerPage() > 0) {
+                    txt_scriptPage[index].setText(String.valueOf(proj.getAvgWordsPerPage()));
+                } else {
+                    txt_scriptPage[index].setText("255");
+                }
                 lbl_wordstocomplete[index].setText("<html><b>Pages Left to Complete: <font color=\"blue\">" + (proj.getWordGoal() - proj.getWordsTillDate()) + "</font></html>");
                 lbl_totalwords[index].setText("<html><b>Current Total Pages: <font color=\"blue\">" + proj.getCurrentWords() + "</font></html>");
                 lbl_milestonecount[index].setText("<html><b>Milestone Page Count: <font color=\"blue\">" + Util.checkMilestoneReward(proj) + "</font></html>");
@@ -2107,6 +2191,8 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             txt_5000[index].setText(txt_5000[index].getText().replace("5,000 words", "25 pages"));
             txt_10000[index].setText(txt_10000[index].getText().replace("10,000 words", "50 pages"));
         } else {
+            lbl_scriptPage[index].setVisible(false);
+            txt_scriptPage[index].setVisible(false);
             lbl_1000[index].setText("<html><b>1,000 Words <br>Reward:</html>");
             lbl_2000[index].setText("<html><b>2,000 Words <br>Reward:</html>");
             lbl_5000[index].setText("<html><b>5,000 Words <br>Reward:</html>");
@@ -2127,6 +2213,16 @@ public class WriDemo extends JFrame implements NativeKeyListener, ActionListener
             txt_5000[index].setText(txt_5000[index].getText().replace("25 pages", "5,000 words"));
             txt_10000[index].setText(txt_10000[index].getText().replace("50 pages", "10,000 words"));
         }
+
+        if (proj != null) {
+            long timeRemaining = TimeUnit.DAYS.convert((proj.getProjectDeadline().getTime() - System.currentTimeMillis()), TimeUnit.MILLISECONDS);
+            if (timeRemaining < 14) {
+                lbl_daysLeft[index].setText("<html><b><font color=\"red\">" + timeRemaining + " Days Remaining!</font></html>");
+            } else {
+                lbl_daysLeft[index].setText("<html><b>" + timeRemaining + " Days Remaining</html>");
+            }
+        }
+
         txt_1000[index].setText(txt_1000[index].getText().replace(oldName, name));
         txt_2000[index].setText(txt_2000[index].getText().replace(oldName, name));
         txt_5000[index].setText(txt_5000[index].getText().replace(oldName, name));

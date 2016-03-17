@@ -83,7 +83,7 @@ public class Monitor implements NativeKeyListener, NativeMouseInputListener {
         if (textHighlighted) {
             String contents = getClipboardContents();
             List<Integer> stringAsIntList = convertStringToIntList(contents);
-            countAndRemoveFromKeyList(stringAsIntList);
+//            countAndRemoveFromKeyList(stringAsIntList);
 
             textHighlighted = false;
         }
@@ -140,9 +140,11 @@ public class Monitor implements NativeKeyListener, NativeMouseInputListener {
     private void countAndRemoveFromKeyList(List<Integer> stringAsIntList) {
         int startIndex = Collections.indexOfSubList(keyList, stringAsIntList);
         int offset = 0;
-        for (int i = startIndex; i < startIndex + stringAsIntList.size(); i++) {
-            keyList.remove(i - offset);
-            offset++;
+        if (startIndex >= 0) {
+            for (int i = startIndex; i < startIndex + stringAsIntList.size(); i++) {
+                keyList.remove(i - offset);
+                offset++;
+            }
         }
 
         int positionOfLastCount = 0;

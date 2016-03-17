@@ -24,6 +24,7 @@ public class Project implements Serializable {
     private String rewardMilestone;
     private String penalty;
     private List<Integer> wordCountList;
+	private int avgWordsPerPage;
 
     public List<Integer> getWordCountList() {
         if (wordCountList == null) {
@@ -154,5 +155,13 @@ public class Project implements Serializable {
 
 	public void setWordsTillDate(int wordsRemain) {
 		this.wordsTillDate = wordsRemain;
+	}
+
+	public int getAvgWordsPerPage() {
+		return avgWordsPerPage;
+	}
+
+	public void setAvgWordsPerPage(int avgWordsPerPage) {
+		this.avgWordsPerPage = avgWordsPerPage;
 	}
 }
